@@ -1,0 +1,41 @@
+runtime: php55
+api_version: 1
+
+instance_class: F1
+
+automatic_scaling:
+  min_idle_instances: automatic
+  max_idle_instances: 1
+  min_pending_latency: 3000ms
+  max_pending_latency: automatic
+
+skip_files:
+- ^(.*/)?\..*$
+- ^(.*/)?composer[^/]+$
+- ^(.*/)?old_files/.*$
+
+handlers:
+#post sensor data
+- url: /messageHook.php$
+  script: messageHook.php
+
+#favicon
+- url: /favicon.ico
+  static_files: favicon.ico
+  upload: favicon.ico
+  application_readable: true
+
+#converter test page
+- url: /urlConvert.php
+  script: urlConvert.php
+
+#/*.php
+- url: /([^/]+\.php)$
+  script: \1
+
+#csv files
+- url: /timetable/([^/]+\.csv)$
+  static_files: \1
+  upload: ([^/]+\.csv)$
+  application_readable: true
+
