@@ -296,13 +296,15 @@ function messageDispatcher($receivedMessage) {
 	);
 
     $user_id = $context['current_user'];
+    $replyMessage = null;
+    $current_apl = null;
 
     //
     //  前回応答したアプリのパターンを先に確認する
     //
     if (isset($context['current_apl'][$user_id])) {
     	
-    	$aplTable = $messageTbl[$curent_apl = $context['current_apl'][$user_id]];
+    	$aplTable = $messageTbl[$current_apl = $context['current_apl'][$user_id]];
 
 	for ($i = 0; isset($aplTable['keyword'][$i]) ; $i++) {
 
@@ -312,7 +314,7 @@ function messageDispatcher($receivedMessage) {
 	}
 
 	// 一致するパターンがない場合でも、優先アプリに問い合わせる
-	if ($replyMessagge == null) $replyMessage = $aplTable['func']($receivedMessage, 999, $result);
+	if ($replyMessage == null) $replyMessage = $aplTable['func']($receivedMessage, 999, $result);
     }
 
     //
