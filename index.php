@@ -114,7 +114,7 @@ table th , table td {
     // $packedStation = array(_name => array('nickname'=> ?, 
     //					     'primary_route'=> ?,
     //					     'routes'=> array(_name=>array(_url_holiday, _url_weekday,,,,_url_sataday)
-    //									 '
+    //
     $gs_station = "gs://" . CloudStorageTools::getDefaultGoogleStorageBucketName() . "/_station.pac";
     $packedStation = unserialize(file_get_contents($gs_station));
 
@@ -311,7 +311,7 @@ if (is_array($packedStation)) {
 </form>
 
 <!-- ////////////////////////////////////////////////// -->
-<hr>
+<hr>ここから下は触らないで！<br>
 <h3>テスト用：メッセージ送受信内容の確認</h3>
 <form name = "test_request" action="messageHook.php" method="post">
 送信メッセージ
@@ -329,7 +329,7 @@ if (is_array($packedStation)) {
 <input type='checkbox' name='mode'>
 </form>
 
-<hr>ここから下は気にしないでください。<br>
+<hr>ここから下は気にしないで！<br>
 
 <?php
 echo "POST data<br>\n";

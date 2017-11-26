@@ -1,6 +1,8 @@
 <?php
 
-function reportSensData($receivedMessage) {
+$reportSensData =  function($receivedMessage, $i, $matched) {
+
+    global $context;
 
     //
     // Read cloudStorage data whitch is owned by other project 'jebaxxMonitor'.
@@ -31,6 +33,6 @@ function reportSensData($receivedMessage) {
     $sens_rec .= PHP_EOL . "https://jebaxxmonitor.appspot.com/temp_barometer.php";
 
     return($sens_rec);
-}
+};
 
 ?>
