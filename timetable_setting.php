@@ -16,6 +16,11 @@ table tr {
 table th , table td {
 	padding:10px;
 }
+span.note {
+	color: #894d88;
+	margin-left: 6px;
+	font-size: small;
+}
 </style>
 <title>index pagae</title>
 
@@ -121,14 +126,14 @@ table th , table td {
     //
     // Take in POST data 
     //
-    if (isset($_POST)) {
+    if (isset($_POST['action'])) {
 	if ($_POST['action'] == '新規作成' || $_POST['action'] == "保存") {
 	    //
 	    //  POSTデータを取り込む。
-	    $station_name = trim($_POST['station_name']);
-	    $route_name   = trim($_POST['route_name']);
+	    $station_name = htmlspecialchars(trim($_POST['station_name']));
+	    $route_name   = htmlspecialchars(trim($_POST['route_name']));
 	    if (isset($packedStation[$station_name])) $stationInfo = $packedStation[$station_name];
-	    $stationInfo['nickname'] = trim($_POST['nickname']);
+	    $stationInfo['nickname'] = htmlspecialchars(trim($_POST['nickname']));
 	    $stationInfo['routes'][$route_name][0] = trim($_POST['url_holiday']);
 	    $stationInfo['routes'][$route_name][1] = trim($_POST['url_weekday']);
 	    $stationInfo['routes'][$route_name][6] = trim($_POST['url_saturday']);
@@ -146,7 +151,7 @@ table th , table td {
 
     	    if ($stationInfo['routes'][$route_name][0] != "") {
 		$html_content = file_get_contents($stationInfo['routes'][$route_name][0]);
-		$csv_content  = convert_html_to_csv($html_content);
+		$csv_content  = htmlspecialchars(convert_html_to_csv($html_content));
 
 	        $gs_route_name = $gs_route_prefix . "/_".$station_name."-".$route_name."-0.csv";
 		file_put_contents($gs_route_name, $csv_content);
@@ -154,7 +159,7 @@ table th , table td {
 
 	    if ($stationInfo['routes'][$route_name][1] != "") {
     		$html_content = file_get_contents($stationInfo['routes'][$route_name][1]);
-		$csv_content  = convert_html_to_csv($html_content);
+		$csv_content  = htmlspecialchars(convert_html_to_csv($html_content));
 
 	        $gs_route_name = $gs_route_prefix . "/_".$station_name."-".$route_name."-1.csv";
 		file_put_contents($gs_route_name, $csv_content);
@@ -162,7 +167,7 @@ table th , table td {
 
 	    if ($stationInfo['routes'][$route_name][6] != "") {
     		$html_content = file_get_contents($stationInfo['routes'][$route_name][6]);
-		$csv_content  = convert_html_to_csv($html_content);
+		$csv_content  = htmlspecialchars(convert_html_to_csv($html_content));
 
 	        $gs_route_name = $gs_route_prefix . "/_".$station_name."-".$route_name."-6.csv";
 		file_put_contents($gs_route_name, $csv_content);
@@ -207,11 +212,11 @@ table th , table td {
 
 <h1>時刻表メンテナンス by ぴょん太</h1>
 <a href="https://line.me/R/ti/p/%40ttu0660o"><img height="36" border="0" alt="友だち追加" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a>
-
+<span style="padding-left:40px;"><a href="index53.html">メインページ</a></span>
 <hr>
 <h3>登録済みの時刻表</h3>
 
-<form name = "station_list" action="index.php" method="post" onsubmit="return check_delete()">
+<form name = "station_list" action="timetable_setting.php" method="post" onsubmit="return check_delete()">
 <input type='hidden' name='station_name'>
 <input type='hidden' name='route_name'>
 <table>
@@ -267,9 +272,9 @@ if (is_array($packedStation)) {
 </form>
 <hr>
 
-<h3>時刻表編集</h3>
+<h3>時刻表編集<span class='note'>・・・新しく時刻表を登録するときはこちらから</span></h3>
 
-<form name = "edit_area" action="index.php" method="post" onsubmit="return check_delete()">
+<form name = "edit_area" action="timetable_setting.php" method="post" onsubmit="return check_delete()">
 <table>
 <?php
 /////////////////////////////////////////////////////////////////////////////
@@ -284,21 +289,21 @@ if (is_array($packedStation)) {
 	$url_weekday = $stationInfo['routes'][$route_name][1];
 	$url_saturday= $stationInfo['routes'][$route_name][6];
 	$checked     = $route_name == $primary_root ? "checked='checked'" : "";
-	echo "<tr><td width=60>駅名</td><td width=120><input type='text' name='station_name' value='".$station_name."' onKeyup=\"valid_chk()\" ><small>LINEから時刻表を呼び出す時この名前を使う</small></td></tr>".PHP_EOL;
-	echo "<tr><td>正式名</td><td><input type='text' name='nickname' value='".$nickname."'><small>これは念のため</small></td></tr>".PHP_EOL;
-	echo "<tr><td>路線</td><td><input type='text' name='route_name' value='".$route_name." 'onKeyup=\"valid_chk()\"><small>上り/下り、○○方面、など</small></td></tr>".PHP_EOL;
-	echo "<tr><td>優先</td><td><label><input type='checkbox' name='primary' ".$checked."><small>利用時は路線名を省略可 省略時に採用する路線を一つ指定</label></td></tr>".PHP_EOL;
-	echo "<tr><td>URL（平日）</td><td><small>YAホ～!の時刻表ページを参考にさせていただくのでここにURLをペースト</small><BR><input type='url' name='url_weekday' value='".$url_weekday."' style=\"width:550px;\"></td></tr>".PHP_EOL;
+	echo "<tr><td width=60>駅名</td><td width=120><input type='text' name='station_name' value='".$station_name."' onKeyup=\"valid_chk()\" ><span class='note'>LINEから時刻表を呼び出す時この名前を使う</span></td></tr>".PHP_EOL;
+	echo "<tr><td>正式名</td><td><input type='text' name='nickname' value='".$nickname."'><span class='note'>これは念のため</span></td></tr>".PHP_EOL;
+	echo "<tr><td>路線</td><td><input type='text' name='route_name' value='".$route_name." 'onKeyup=\"valid_chk()\"><span class='note'>上り/下り、○○方面、など</span></td></tr>".PHP_EOL;
+	echo "<tr><td>優先</td><td><label><input type='checkbox' name='primary' ".$checked."><span class='note'>利用時は路線名を省略可 省略時に採用する優先路線を一つ指定</span></label></td></tr>".PHP_EOL;
+	echo "<tr><td>URL（平日）</td><td><span class='note'>YAホ～!の時刻表ページを参考にさせていただくのでここにURLをペースト</span><BR><input type='url' name='url_weekday' value='".$url_weekday."' style=\"width:550px;\"></td></tr>".PHP_EOL;
 	echo "<tr><td>URL（休日）</td><td><input type='url' name='url_holiday' value='".$url_holiday."' style=\"width:550px;\"></td></tr>".PHP_EOL;
 	echo "<tr><td>URL（土曜）</td><td><input type='url' name='url_saturday' value='".$url_saturday."' style=\"width:550px;\"></td></tr>".PHP_EOL;
 	echo "<tr><td></td><td><input type='submit' name='action' value='保存' onclick=\"_post_action='save'\">".PHP_EOL;
     }
     else {
-	echo "<tr><td width=60>駅名</td><td width=100><input type='text' name='station_name' onKeyup=\"valid_chk()\"><small>LINEから時刻表を呼び出す時この名前を使う</small></td></tr>".PHP_EOL;
-	echo "<tr><td>正式名</td><td><input type='text' name='nickname'><small>これは念のため</small></td></tr>".PHP_EOL;
-	echo "<tr><td>路線</td><td><input type='text' name='route_name' onKeyup=\"valid_chk()\"><small>上り/下り、○○方面、など</small></td></tr>".PHP_EOL;
-	echo "<tr><td>優先</td><td><label><input type='checkbox' name='primary' value='primary'><small>利用時は路線名を省略可 省略時に採用する路線を一つ指定</small></label></td></tr>".PHP_EOL;
-	echo "<tr><td>URL（平日）</td><td><small>YAホ～!の時刻表ページを参考にさせていただくのでここにURLをペースト</small><BR><input type='url' name='url_weekday' style=\"width:550px;\"></td></tr>".PHP_EOL;
+	echo "<tr><td width=60>駅名</td><td width=100><input type='text' name='station_name' onKeyup=\"valid_chk()\"><span class='note'>LINEから時刻表を呼び出す時この名前を使う</span></td></tr>".PHP_EOL;
+	echo "<tr><td>正式名</td><td><input type='text' name='nickname'><span class='note'>これは念のため</span></td></tr>".PHP_EOL;
+	echo "<tr><td>路線</td><td><input type='text' name='route_name' onKeyup=\"valid_chk()\"><span class='note'>上り/下り、○○方面、など</span></td></tr>".PHP_EOL;
+	echo "<tr><td>優先</td><td><label><input type='checkbox' name='primary' value='primary'><span class='note'>利用時は路線名を省略可 省略時に採用する優先路線を一つ指定</span></label></td></tr>".PHP_EOL;
+	echo "<tr><td>URL（平日）</td><td><span class='note'>YAホ～!の時刻表ページを参考にさせていただくのでここにURLをペースト</span><BR><input type='url' name='url_weekday' style=\"width:550px;\"></td></tr>".PHP_EOL;
 	echo "<tr><td>URL（休日）</td><td><input type='url' name='url_holiday' style=\"width:550px;\"></td></tr>".PHP_EOL;
 	echo "<tr><td>URL（土曜）</td><td><input type='url' name='url_saturday' style=\"width:550px;\"></td></tr>".PHP_EOL;
 	echo "<tr><td></td><td><input type='submit' name='action' value='新規作成' onclick=\"_post_action='create'\" disabled>".PHP_EOL;

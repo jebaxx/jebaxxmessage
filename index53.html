@@ -1,0 +1,127 @@
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<style type="text/css">
+div.head-menu {
+	height:140;
+	background-color:#aaeeee;
+	padding: 10px 10px 0px 10px;
+}
+div#main-title {
+	margin-left: 28px;
+}
+div#pyon-1 {
+	float:left;
+	margin: 0px 18px;
+	padding; 0px;
+}
+div#main-page {
+	height:auto;
+	padding: 5px 0px 0px 0px;
+}
+div#left-page {
+	width:75%;
+	height:auto;
+	padding: 4px 25px 25px 8px;
+	margin: 4px 25px 25px 8px;
+}
+div#right-menu {
+	float:right;
+	width:20%;
+	height:1200px;
+	background-color:#eeaaee;
+	padding: 10px;
+}
+</style>
+<title>index pagae</title>
+</head>
+<body>
+
+<div class="head-menu">
+  <div id="pyon-1">
+    <p><img src="images/DSCF1515.JPG" alt="ぴょん太" width=100 height=100 /></p>
+  </div>
+
+  <div id="main-title">
+
+    <h1>友達・ぴょん太</h1>
+    ともだち募集…ただし、身内（みうち）に限る
+  </div>
+</div>
+
+<div id="main-page">
+  <div id="right-menu">
+    <p style="text-align:center"><a href="https://line.me/R/ti/p/%40ttu0660o">
+        <img height="36" border="0" alt="友だち追加" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a></p>
+    <h4>メニュー</h4>
+    <ul>
+      <li><a href=timetable_setting.php>時刻表の登録・編集</a></li>
+      <li><a href=holiday_maintenance.php>祝日の設定</li>
+      <li><a href=https://jebaxxmonitor.appspot.com/index.html>気温・気圧の記録</a></li>
+
+    </ul>
+  </div>
+  <div id="left-page">
+    <hr>
+    <h2>ぴょん太にできること</h2>
+    <h3>１．これから駅を出発する電車を調べて答えてくれる</h3>
+    <ul>
+      <li>駅は事前登録が必要</li>
+      <li>Yahoo時刻表で検索できる駅なら登録できる</li>
+      <li>曜日は自動判別！</li>
+      <li>祝祭日の判断も半自動（内閣府のHPからデータを取ってくる）</li>
+    </ul>
+
+    <h3><a href="#temp_barometer">２．部屋の温度と気圧を教えてくれる</a></h3>
+    <ul>
+      <li>八王子市内のマンションの一室の現在（1分以内）の気温・気圧を教えてくれる</li>
+      <li>気温・気圧の推移がわかるグラフも表示してくれる</li>
+    </ul>
+
+    <h4><a href="#restriction">ただし、ぴょん太は身内（みうち）のお世話しかできません</a></h4>
+
+    <hr>
+
+    <h2>１．これから駅を出発する電車を調べて答えてくれる</h2>
+    <h3 id="LINE_apl">使い方（LINEアプリ）・・・<a href="#station_entry">調べてもらう駅の登録方法</a></h3>
+      <p><img src="images/Screenshot_station.jpeg" alt="時刻検索中画面" width=270/></p>
+      <p>ぴょん太を友達に登録してください。トーク画面でぴょん太に質問してください。</p>
+    <h4>◎「時刻表」＋駅名</h4>
+      <p>"時刻表"と「駅名」を続けて入力し送信すると、その時間以降に出発する電車の時刻、行き先、電車種別などを答えてくれます。</p>
+    <h4>◎つづき ・ 続き ・ その次</h4>
+      <p>一度に調べてくれる電車は4本ですが、それより先の電車についても知りたい場合には、「つづき」「続き」「その次」などと聞いてください。続きの電車を更に4本答えてくれます。</p>
+      <p><img src="images/Screenshot_tsuzuki.jpeg" alt="続きを見たい時" width=270/></p>
+    <h4>◎つぎ ・ 次</h4>
+      <p>前回と同じ質問を繰り返したい時（忘れ物を取りに戻って出直すときなど）は「次」「つぎ」などと聞いてください。その時間以降の電車をもう一度答えてくれます。</p>
+      <p><img src="images/Screenshot_tsugi.jpeg" alt="もう一度聞きたい時" width=270/></p>
+    <h4>◎路線（上り/下りなど）の指定方法</h4>
+      <p>駅ごとに優先する路線が設定されています。そのため、路線名を何も指定しなければ、ぴょん太は優先路線の発車時刻を調べます。優先路線以外を調べたい時には、"時刻表"と「駅名」に続いて「路線名」を入力してください。</p>
+      <p><img src="images/Screenshot_route1.jpeg" alt="別の路線を見たい時１" width=270/></p>
+      <p>前回問い合わせた駅の路線を別の物にかえる事もできます。その時は路線名」だけ入力してください。
+      <p><img src="images/Screenshot_route2.jpeg" alt="別の路線を見たい時２" width=270/></p>
+    <h3 id="station_entry">使い方（調べてもらう駅の登録方法）・・・<a href="#LINE_apl">LINEアプリ</a></h3>
+      <p>誰でも登録できます。</p>
+      <a href=timetable_setting.php>時刻表の登録・編集はこちらのページ</a>
+      <p>ページの最初に「登録済み時刻表」の一覧表があります。
+      駅を追加したい場合には、その下の「時刻表編集」の入力欄に、駅名、路線名、時刻表URL、などを入力して、「新規作成」ボタンを押してください。「URL」については、ここでは詳しく書きませんが、既に登録済みの駅を参考に（登録済の時刻表をどれか一つ選んで編集ボタンを押すと登録内容が表示されます）ブラウザ上のアドレス欄に表示されているURLをコピーすれば登録は完了です。</p>
+      <p>優先路線は各駅に一つだけ設定できます。同じ駅に対して2つ目を設定しようとすると、元の優先路線が解除されて最後に設定した一つだけが設定されます。</p>
+    <hr>
+    <h2 id="temp_barometer">２．部屋の温度と気圧を教えてくれる</h2>
+    <h3>使い方</h3>
+      <p><img src="images/Screenshot_kion.jpeg" alt="気温・気圧の問い合わせ" width=270/></p>
+      <p>「気温」と入れるだけで応答してくれます。使い方はそれだけです。
+      気温・気圧の他に、今日の気温・気圧をグラフ表示してくれるページのURLも一緒に送ってきます。</p>
+
+	<hr>
+    <h4 id="restriction">ただし、ぴょん太は身内（みうち）のお世話しかできません</h4>
+      <p>なぜならば・・・</p>
+	  <ul>
+	    <li>LINEの友達登録人数に制約があります（無料のお試しライセンスだから）</li>
+	    <li>管理用のWebページのセキュリティ対策が不十分です。それなりの対策は入れてありますがテストが十分ではありません。</li>
+	    <li>時刻表データを他所から無断でもらってきています</li>
+	  </ul>
+  </div>
+</div>
+
+</body>
+</html>

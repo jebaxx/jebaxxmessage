@@ -25,9 +25,17 @@ handlers:
   upload: favicon.ico
   application_readable: true
 
+#images
+- url: /images/(.+\.(JPG|jpeg))$
+  static_files: images/\1
+  upload: images/(.+\.(JPG|jpeg))
+  application_readable: true
+
 #converter test page
-- url: /urlConvert.php
-  script: urlConvert.php
+- url: /index53.html
+  static_files: index53.html
+  upload: index53.html
+  application_readable: true
 
 #/*.php
 - url: /([^/]+\.php)$

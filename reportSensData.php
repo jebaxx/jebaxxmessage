@@ -1,13 +1,13 @@
 <?php
 
-$reportSensData =  function($receivedMessage, $i, $matched) {
+$reportSensData =  function($receivedMessage, $i, $matched, &$context_s, &$context_u) {
 
-    global $context;
+    if ($i != 0) return null;
 
     //
     // Read cloudStorage data whitch is owned by other project 'jebaxxMonitor'.
     // In default settings, this access is deied, so additionl access right is needed.
-    // It can add in jebaxxMOnitor's storage buouser
+    // It can be added in jebaxxMOnitor's storage buouser.
     //
     $gs_file = "gs://jebaxxmonitor.appspot.com/postTime";
     $packedData = unserialize(file_get_contents($gs_file));
@@ -15,7 +15,7 @@ $reportSensData =  function($receivedMessage, $i, $matched) {
     if (!is_array($packedData)) return(null);
 
     $t = new DateTime();
-    $sens_rec = $t->setTimeStamp($packedData[0])->format('Y-m-d H:i') . PHP_EOL;
+    $sens_rec = $t->setTimeStamp($packedData[0])->format('Y/m/d H:i') . PHP_EOL;
 
     $props = $packedData[2];
 
