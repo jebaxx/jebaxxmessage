@@ -5,18 +5,30 @@
 <title>holiday info maintenance</title>
 
 <style type="text/css">
+.comment {
+	font-size: small;
+	color: #894d88;
+}
+div.frame {
+	width:580px;
+	margin:auto;
+}
 div.head-menu {
-	height:120;
-	background-color:#aaeeee;
-	padding: 1px 00px 00px 0px;
+	height:130;
+	background-color:#cceec0;
+	border: 2px solid #9b9b9b;
+	padding: 0px 20px 0px 20px;
+	position: relative;
 }
 div.main-title {
 	margin-left: 30px;
 }
 div.main-page {
-	height:auto;
-	padding-top: 30px;
-	margin-left: 20px;
+	background-color:#eef2ee;
+	margin-top: 3px;
+	padding-top: 25;
+	padding-left: 20px;
+	border: 2px solid #9b9b9b;
 }
 </style>
 
@@ -44,17 +56,18 @@ function check_save_action() {
 
 </head>
 <body>
-<div class="head-menu">
-  <div class="main-title">
-    <h1>祝祭日情報の確認・編集</h1>
-    by ぴょん太<span style="padding-left:40px;"><a href="index53.html">メインページへ</a></span>
+<div class="frame">
+  <div class="head-menu">
+    <div class="main-title">
+      <h1>祝祭日情報の確認・編集</h1>
+      <p style="position:absolute; bottom:0">by ぴょん太<span style="padding-left:40px;"><a href="index53.html">メインページへ</a></span></p>
+    </div>
   </div>
-</div>
 
-<div class="main-page">
-<form name = "holiday_edit" action="holiday_maintenance.php" method="post" onsubmit=" return check_save_action()">
-<textarea name="holiday_text" cols="40" rows="30">
-<?php
+  <div class="main-page">
+    <form name = "holiday_edit" action="holiday_maintenance.php" method="post" onsubmit=" return check_save_action()">
+    <textarea name="holiday_text" cols="48" rows="30">
+    <?php
     require_once("google/appengine/api/cloud_storage/CloudStorageTools.php");
     use google\appengine\api\cloud_storage\CloudStorageTools;
 
@@ -91,15 +104,22 @@ function check_save_action() {
     }
 
     fclose($r_hndl);
-?>
-</textarea>
-<p>
-<input type=submit name="action" value="再取得" onclick="_post_action='reload'">
-<input type=submit name="action" value="保存" onclick="_post_action='save'">
-</p>
-<p>［再取得］　内閣府のホームページにある暦情報を取り込みます。ここにあるデータは上書きされます。<br>
-［保存］　　ここで編集した結果を保存して、今後利用します</p>
-</form>
+    ?>
+    </textarea>
+    <p>
+    <table>
+    <tr>
+      <td width=90> <input type=submit name="action" value="再取得" onclick="_post_action='reload'" style="WIDTH:75px; HEIGHT:40px;"> </td>
+      <td width=380><p class="comment"> 内閣府のホームページにある暦情報を取り込みます。ここにあるデータは上書きされます。（保存もします）</p></td>
+    </tr>
+    <tr>
+      <td> <input type=submit name="action" value="保存" onclick="_post_action='save'" style="WIDTH:75px; HEIGHT:40;"> </td>
+      <td><p class="comment">ここで編集した結果を保存します。ぴょん太は今後これを利用します。 </p></td>
+    </td>
+    </table>
+    </p>
+    </form>
+  </div>
 </div>
 
 

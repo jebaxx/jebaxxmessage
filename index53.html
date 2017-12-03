@@ -2,125 +2,244 @@
 <head>
 <meta charset="UTF-8">
 <style type="text/css">
-div.head-menu {
-	height:140;
-	background-color:#aaeeee;
-	padding: 10px 10px 0px 10px;
+div.frame {
+	width:990px;
+	margin:auto;
 }
-div#main-title {
-	margin-left: 28px;
+div.head-menu {
+	height:160;
+	background-color:#cceec0;
+	padding: 0px 10px 0px 10px;
+	border: 2px solid #9b9b9b;
+}
+div.nutral {
+	float:left;
+	margin-top:18px;
+	width:550px;
+}
+div#head-title {
+//	margin-left: 18px;
+}
+div#head-side {
+	float:right;
+	font-size:small;
+	background-color:#ddeede;
+	margin: 10px 0px 5px 0px;
+	border: 2px solid #9b9b9b;
+	padding: 0px 15px 0px 15px;
 }
 div#pyon-1 {
 	float:left;
-	margin: 0px 18px;
+	margin: 0px 38px 0px 18px;
 	padding; 0px;
 }
+
+
 div#main-page {
+	background-color:#eef2ee;
 	height:auto;
-	padding: 5px 0px 0px 0px;
+	margin: 5px 0px 0px 0px;
+	border: 2px solid #9b9b9b;
 }
 div#left-page {
-	width:75%;
+	width:650px;
 	height:auto;
 	padding: 4px 25px 25px 8px;
 	margin: 4px 25px 25px 8px;
 }
 div#right-menu {
 	float:right;
-	width:20%;
-	height:1200px;
-	background-color:#eeaaee;
+	width:280px;
+	height:100%;
 	padding: 10px;
 }
+.section_head {
+    padding: 3px 0px 0px 8px; 
+	background: linear-gradient(#eec0c0, #eaeaea);
+}
+ul.mokuji {
+	margin:0 0 0 1em;
+	padding:0;
+}
+
+    <ul class="mokuji">
 </style>
 <title>index pagae</title>
 </head>
 <body>
 
+<div class="frame">
 <div class="head-menu">
-  <div id="pyon-1">
-    <p><img src="images/DSCF1515.JPG" alt="ぴょん太" width=100 height=100 /></p>
+
+  <div class="nutral">
+    <div id="pyon-1">
+      <p><img src="images/DSCF1515.JPG" alt="ぴょん太" width=100 height=100 /></p>
+    </div>
+
+    <div id="head-title">
+
+      <h1>友達・ぴょん太</h1>
+      ともだち募集…ただし、身内（みうち）に限る
+    </div>
   </div>
 
-  <div id="main-title">
-
-    <h1>友達・ぴょん太</h1>
-    ともだち募集…ただし、身内（みうち）に限る
+  <div id="head-side">
+    <p>ぴょん太のプロフィール</p>
+    <ul>
+      <li>Google Cloud Platformの仮想サーバー内に生息</li>
+      <li>2017/11/14生まれ
+      <li>LINE友だちとLINEアプリで会話できる</li>
+      <li>今後もっと重要な任務を担当することになっている</li>
+    </ul>
   </div>
+
 </div>
 
 <div id="main-page">
   <div id="right-menu">
+    <hr>
     <p style="text-align:center"><a href="https://line.me/R/ti/p/%40ttu0660o">
         <img height="36" border="0" alt="友だち追加" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a></p>
+    <hr>
     <h4>メニュー</h4>
     <ul>
-      <li><a href=timetable_setting.php>時刻表の登録・編集</a></li>
-      <li><a href=holiday_maintenance.php>祝日の設定</li>
-      <li><a href=https://jebaxxmonitor.appspot.com/index.html>気温・気圧の記録</a></li>
-
+      <li><a href="timetable_setting.php">時刻表の登録・編集</a></li>
+      <li><a href="holiday_maintenance.php">祝日の設定</a></li>
+      <li><a href="tomodachi-catalog.php">ともだちカタログ</a></li>
     </ul>
+
+    <hr>
+    <h4>目次…</h4>
+    <small>
+    <ul class="mokuji_0">
+      <li><a href="#intro">ぴょん太にできること</a></li>
+      <li><a href="#sec_1">これから出発する電車を調べてくれる</a></li>
+        <ul class="mokuji">
+          <li><a href="#usage_a">使い方（LINEアプリ）</a></li>
+            <ul class="mokuji">
+              <li><a href="#station_name">「時刻表」＋駅名</a></li>
+              <li><a href="#station_next">つづき・続き・その次</a></li>
+              <li><a href="#station_replay">つぎ・次</a></li>
+              <li><a href="#station_route">路線の指定方法</a></li>
+            </ul>
+          <li><a href="#usage_w">使い方（利用する駅の登録方法）</a></li>
+          <li><a href="#cal_">休日・祝日・土曜のダイヤ</a></li>
+            <ul class="mokuji">
+              <li><a href="#cal_weekend">土曜・日曜のダイヤ</a></li>
+              <li><a href="#cal_holiday">祝日のダイヤ</a></li>
+              <li><a href="#cal_set_holiday">今日は祝日（休日・土曜・平日）</a></li>
+              <li><a href="#cal_edit_holiday">事前に暦を修正</a></li>
+            </ul>
+        </ul>
+      <li><a href="#sec_2">２．部屋の温度と気圧を教えてくれる</a></li>
+      <li><a href="#important_point">利用上の注意事項</a></li>
+    </ul>
+    </small>
+
+    <hr>
+    <small>
+    <h4>参考リンク</h4>
+    <ul>
+      <li><a href="https://jebaxxmonitor.appspot.com/index.html">現在の気温・気圧</a></li>
+      <li><a href="https://github.com/jebaxx/jebaxxmessage">プログラム・ソース</a></li>
+      <li><a href="https://developers.line.me/ja/">LINEアプリ開発</a></li>
+      <li><a href="https://admin-official.line.me/">LINE Manager</a></li>
+      <li><a href="https://console.cloud.google.com/home/dashboard?project=jebaxxmessage">google cloud platform管理ページ</a></li>
+    </ul>
+    </small>
+    <hr>
   </div>
   <div id="left-page">
     <hr>
-    <h2>ぴょん太にできること</h2>
+    <h2 class="section_head" id="intro">ぴょん太にできること</h2>
     <h3>１．これから駅を出発する電車を調べて答えてくれる</h3>
     <ul>
-      <li>駅は事前登録が必要</li>
-      <li>Yahoo時刻表で検索できる駅なら登録できる</li>
+      <li>利用する駅は<a href="#usage_w">事前登録</a>が必要</li>
+      <li><a href="https://transit.yahoo.co.jp/station/time">こちら</a>で検索できる駅なら登録できる</li>
       <li>曜日は自動判別！</li>
-      <li>祝祭日の判断も半自動（内閣府のHPからデータを取ってくる）</li>
+      <li>祝祭日の判断も半自動（<a href="http://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html">内閣府のHP</a>からデータを取ってくる）</li>
     </ul>
 
-    <h3><a href="#temp_barometer">２．部屋の温度と気圧を教えてくれる</a></h3>
+    <h3>２．部屋の温度と気圧を教えてくれる</h3>
     <ul>
-      <li>八王子市内のマンションの一室の現在（1分以内）の気温・気圧を教えてくれる</li>
+      <li>八王子市内の某マンションの一室の現在（1分以内）の気温・気圧を教えてくれる</li>
       <li>気温・気圧の推移がわかるグラフも表示してくれる</li>
     </ul>
 
-    <h4><a href="#restriction">ただし、ぴょん太は身内（みうち）のお世話しかできません</a></h4>
+    <h4>・・・「ぴょん太」の任務は、今後もどんどん増えてゆきます。<h4>
+    <h4><a href="#important_point">利用上の注意点を確認してください</a></h4>
 
     <hr>
 
-    <h2>１．これから駅を出発する電車を調べて答えてくれる</h2>
-    <h3 id="LINE_apl">使い方（LINEアプリ）・・・<a href="#station_entry">調べてもらう駅の登録方法</a></h3>
-      <p><img src="images/Screenshot_station.jpeg" alt="時刻検索中画面" width=270/></p>
-      <p>ぴょん太を友達に登録してください。トーク画面でぴょん太に質問してください。</p>
-    <h4>◎「時刻表」＋駅名</h4>
+    <h2 class="section_head" id="sec_1">１．これから駅を出発する電車を調べて答えてくれる</h2>
+    <h3 id="usage_a">使い方（LINEアプリ）</h3>
+      <p><img src="images/Screenshot_station.jpeg" alt="時刻検索中画面" width=300/></p>
+      <p>ぴょん太をLINEの友達に登録してください。トーク画面でぴょん太に質問してください。</p>
+    <h4 id="station_name">◎「時刻表」＋駅名</h4>
       <p>"時刻表"と「駅名」を続けて入力し送信すると、その時間以降に出発する電車の時刻、行き先、電車種別などを答えてくれます。</p>
-    <h4>◎つづき ・ 続き ・ その次</h4>
-      <p>一度に調べてくれる電車は4本ですが、それより先の電車についても知りたい場合には、「つづき」「続き」「その次」などと聞いてください。続きの電車を更に4本答えてくれます。</p>
-      <p><img src="images/Screenshot_tsuzuki.jpeg" alt="続きを見たい時" width=270/></p>
-    <h4>◎つぎ ・ 次</h4>
-      <p>前回と同じ質問を繰り返したい時（忘れ物を取りに戻って出直すときなど）は「次」「つぎ」などと聞いてください。その時間以降の電車をもう一度答えてくれます。</p>
-      <p><img src="images/Screenshot_tsugi.jpeg" alt="もう一度聞きたい時" width=270/></p>
-    <h4>◎路線（上り/下りなど）の指定方法</h4>
+    <h4 id="station_next">◎つづき ・ 続き ・ その次</h4>
+      <p>一度に調べてくれる電車は4本ですが、それより先の電車についても知りたい場合には、「つづき」「続き」「その次」などと聞いてください。続きの電車を更に4本調べて教えてくれます。</p>
+      <p><img src="images/Screenshot_tsuzuki.jpeg" alt="続きを見たい時" width=300/></p>
+    <h4 id="station_replay">◎つぎ ・ 次</h4>
+      <p>前回と同じ質問を繰り返したい時（忘れ物を取りに戻って出直すときなど）は「次」「つぎ」などと聞いてください。その時間以降の電車をもう一度しらべ直してくれます。</p>
+      <p><img src="images/Screenshot_tsugi.jpeg" alt="もう一度聞きたい時" width=300/></p>
+    <h4 id="station_route">◎路線（上り/下りなど）の指定方法</h4>
       <p>駅ごとに優先する路線が設定されています。そのため、路線名を何も指定しなければ、ぴょん太は優先路線の発車時刻を調べます。優先路線以外を調べたい時には、"時刻表"と「駅名」に続いて「路線名」を入力してください。</p>
-      <p><img src="images/Screenshot_route1.jpeg" alt="別の路線を見たい時１" width=270/></p>
-      <p>前回問い合わせた駅の路線を別の物にかえる事もできます。その時は路線名」だけ入力してください。
-      <p><img src="images/Screenshot_route2.jpeg" alt="別の路線を見たい時２" width=270/></p>
-    <h3 id="station_entry">使い方（調べてもらう駅の登録方法）・・・<a href="#LINE_apl">LINEアプリ</a></h3>
-      <p>誰でも登録できます。</p>
-      <a href=timetable_setting.php>時刻表の登録・編集はこちらのページ</a>
-      <p>ページの最初に「登録済み時刻表」の一覧表があります。
-      駅を追加したい場合には、その下の「時刻表編集」の入力欄に、駅名、路線名、時刻表URL、などを入力して、「新規作成」ボタンを押してください。「URL」については、ここでは詳しく書きませんが、既に登録済みの駅を参考に（登録済の時刻表をどれか一つ選んで編集ボタンを押すと登録内容が表示されます）ブラウザ上のアドレス欄に表示されているURLをコピーすれば登録は完了です。</p>
-      <p>優先路線は各駅に一つだけ設定できます。同じ駅に対して2つ目を設定しようとすると、元の優先路線が解除されて最後に設定した一つだけが設定されます。</p>
+      <p><img src="images/Screenshot_route1.jpeg" alt="別の路線を見たい時１" width=300/></p>
+      <p>前回問い合わせた駅の路線だけを別の物にかえる場合には、「路線名」だけ入力すればぴょん太は理解して調べ直してくれます。
+      <p><img src="images/Screenshot_route2.jpeg" alt="別の路線を見たい時２" width=300/></p>
+
     <hr>
-    <h2 id="temp_barometer">２．部屋の温度と気圧を教えてくれる</h2>
+    <h3 id="usage_w">使い方（利用する駅の登録方法）</h3>
+      <a href=timetable_setting.php>時刻表の登録・編集はこちらのページ</a>
+      <p>ページの先頭に「登録済み時刻表」の一覧表があります。ここに自分が利用している駅が登録されていない場合や、使いたい路線が登録されていない場合には新しく登録してください。誰でも登録できます。</p>
+      <p><img src="images/time_table_list.jpeg" alt="登録済み時刻表一覧画面" border=1 width=640></p>
+      駅を追加したい場合には、時刻表一覧の下にある「時刻表編集」の入力欄に、駅名、路線名、時刻表URL、などを入力して、「新規作成」ボタンを押してください。</p>
+      <p><img src="images/time_table_edit.jpeg" alt="登録済み時刻表一覧画面" border=1 width=640></p>
+      <p>「URL」については、ここでは詳しく書きませんが、既に登録済みの駅を参考に登録したい時刻表ページをブラウザで表示し、アドレス欄のURLをコピーすれば登録は完了です。</p>
+      <p>正式駅名は今の所入力しているだけで使っていませんが、駅名を省略名にした場合などには正式名が参考になると思います。</p>
+      <p>優先路線は各駅に一つだけ設定できます。同じ駅に対して2つ目を設定しようとすると、元の優先路線が解除されて最後に設定した一つだけが有効になります。</p>
+    <hr>
+    <h3 id="cal_">休日・祝日・土曜のダイヤ</h3>
+      <h4 id="cal_weekend">土曜・日曜ダイヤ</h4>
+      <p>曜日についてはぴょん太が自分で判断して、適切な時刻表を調べてくれます。</p>
+      <h4 id="cal_holiday">祝日のダイヤ</h4>
+      <p>祝日についても、ぴょん太は内閣府が公開している祝日情報を見て、当日が国民の祝日かどうか調べようとします。
+      ただし、例えば1月2日は祝日ではなく、他にも振替休日の制度や、鉄道会社による特別運用などもあり、正しく判断できない日が年に数日あります。ぴょん太が間違った時刻表を見ていたら、次のように教えてあげてください。</p>
+    <h4 id="cal_set_holiday">◎今日は祝日（休日・土曜・平日）</h4>
+      <p><img src="images/Screenshot_holidaysetting.jpeg" alt="祝日の指定" width=300></p>
+      <p>ぴょん太は教えられたことをその日一日覚えてるので一度だけ教えれば十分です。ぴょん太は言われたことを素直に覚えて他の人からの質問にもそれを元に答えようとしますので、絶対に嘘は教えないでください。</p>
+    <h4 id="cal_edit_holiday">もう一つの方法：事前に暦を修正して休日を教えてあげるやり方</h4>
+      <a href="holiday_maintenance.php">祝日の確認・編集ページはこちら</a>
+      <p>こちらのページで祝祭日の情報を確認し、必要に応じて修正することができます。</p>
+      <p>ぴょん太がこの暦情報をチェックしに来るのは、その日に来た最初の質問に答える時です。後はそれを覚えていて次の日までチェックに来ませんから、当日の暦を修正してもぴょん太には伝わりません。ぴょん太は一日の境目を午前2時だと思っているので、午前2時前、更に言えば、午前2時を超えてもまだ誰も質問して来ないうちに修正すれば、その結果が翌朝の質問には反映される、と言うのが正確な所です。</p>
+      <p><img src="images/holiday_maintenance.jpeg" alt="祝日設定画面" border=1 width=500></p>
+
+    <hr>
+    <h2 class="section_head" id="sec_2">２．部屋の温度と気圧を教えてくれる</h2>
     <h3>使い方</h3>
-      <p><img src="images/Screenshot_kion.jpeg" alt="気温・気圧の問い合わせ" width=270/></p>
-      <p>「気温」と入れるだけで応答してくれます。使い方はそれだけです。
+      <p><img src="images/Screenshot_kion.jpeg" alt="気温・気圧の問い合わせ" width=300/></p>
+      <p>トーク画面に「気温」と入れるだけで応答してくれます。使い方はそれだけです。
       気温・気圧の他に、今日の気温・気圧をグラフ表示してくれるページのURLも一緒に送ってきます。</p>
 
 	<hr>
-    <h4 id="restriction">ただし、ぴょん太は身内（みうち）のお世話しかできません</h4>
-      <p>なぜならば・・・</p>
+    <h4 class="section_head" id="important_point">利用上の注意事項</h4>
 	  <ul>
-	    <li>LINEの友達登録人数に制約があります（無料のお試しライセンスだから）</li>
-	    <li>管理用のWebページのセキュリティ対策が不十分です。それなりの対策は入れてありますがテストが十分ではありません。</li>
-	    <li>時刻表データを他所から無断でもらってきています</li>
+	    <li>利用できるのは身内の範囲に限らせてください<br>
+		なぜならば・・・
+		<ul>
+	      <li>LINEの友達登録人数に制約があります（無料のお試しライセンスだから）</li>
+	      <li>Webページはそれなりのセキュリティ対策はしてありますが十分にテストしている訳ではありません。重大な損害を被るようなことはないでしょうが、誰にでも開放してしまうと悪いイタズラをされる恐れはあります。</li>
+	      <li>時刻表データを他所から無断でもらってきています。</li>
+	      <li>休日の設定や、時刻表情報は個人ごとではなく皆で共有するようにぴょん太に指示しています。個人ごとに管理させる事も可能ですが、あえてこのように教え込んでいます。</li>
+	    </ul>
+	    <li><a href="#cal_set_holiday">休日設定</a>は利用者全員で一つです。ぴょん太に嘘を教えないでください</li>
+	    <li><a href="#usage_w">時刻表情報</a>も利用者全員で共有します。他の人が利用しているかもしれないデータを不用意に消さないよう注意してください。</li>
+	    <li><a href="#usage_w">時刻表情報</a>に間違った登録をしてそのままにしておくと他の利用者が混乱します。登録したらその内容が正しいか必ず確認してください。</li>
+	    <li>駅や路線をどのくらいまで増やしてもぴょん太が支障なく対応できるのかよく分かっていません。駅を登録する際は一度に大量にやらずに、様子を見ながらお願いします。</li>
 	  </ul>
   </div>
+</div>
 </div>
 
 </body>

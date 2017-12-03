@@ -2,19 +2,45 @@
 <head>
 <meta charset="UTF-8">
 <style type="text/css">
+
+div.frame {
+	width:860px;
+	margin:auto;
+}
+
+div.head-menu {
+	height:100;
+	background-color:#cceec0;
+	padding: 0px 20px 0px 20px;
+	border: 2px solid #9b9b9b;
+	position: relative;
+}
+
+div.main-page {
+	background-color:#eef2ee;
+	padding: 5px 20px 5px 20px;
+	margin: 3px 0 0 0;
+	border: 2px solid #9b9b9b;
+}
+
+div.menu-side {
+	float:right;
+	margin-top: 30px;
+}
+
 table {
 	border-collapse:collapse;
 	border-spacing:0;
-	border:1px solid #ccc;
 	padding:0;
 	margin:10;
 }
 table tr {
-	border:1px solid #ddd;
-	padding:5px;
+	border:1px solid #9b9b9b;
+	padding:10px;
+//	padding:10px 15px 10px 15px;
 }
 table th , table td {
-	padding:10px;
+	padding:8px 15px 8px 15px;
 }
 span.note {
 	color: #894d88;
@@ -209,10 +235,15 @@ span.note {
 
 </head>
 <body>
-
-<h1>時刻表メンテナンス by ぴょん太</h1>
+<div class="frame">
+<div class="head-menu">
+<div class="menu-side">
 <a href="https://line.me/R/ti/p/%40ttu0660o"><img height="36" border="0" alt="友だち追加" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a>
-<span style="padding-left:40px;"><a href="index53.html">メインページ</a></span>
+</div>
+<h1>時刻表メンテナンス by ぴょん太</h1>
+<span style="padding-left:40px;position: absolute; bottom:0;"><a href="index53.html">メインページ</a></span>
+</div>
+<div class="main-page">
 <hr>
 <h3>登録済みの時刻表</h3>
 
@@ -223,10 +254,10 @@ span.note {
 <thead>
 <tr>
   <th width=50>選択</th>
-  <th width=120>駅名</th>
-  <th width=120>正式名</th>
+  <th width=130>駅名</th>
+  <th width=130>正式名</th>
   <th width=100>路線</th>
-  <th width=100>優先</th>
+  <th width=80>優先</th>
   <th width=120>登録済URL</th>
 </tr>
 </thead>
@@ -246,9 +277,9 @@ if (is_array($packedStation)) {
 	    if ($route_name == $stationInfo['primary_route']) echo 'X';	// 優先
 	    echo "</label></td>".PHP_EOL;
 	    echo "<td><label for='st_".$_id."'>";
-	    if (isset($routeInfo[1]) && $routeInfo[1] != "")  echo "平日 ";
-	    if (isset($routeInfo[0]) && $routeInfo[0] != "")  echo "休日 ";
-	    if (isset($routeInfo[6]) && $routeInfo[6] != "")  echo "土曜";
+	    if (isset($routeInfo[1]) && $routeInfo[1] != "")  echo "<a href=\"".$routeInfo[1]."\">平日</a> ";
+	    if (isset($routeInfo[0]) && $routeInfo[0] != "")  echo "<a href=\"".$routeInfo[0]."\">休日</a> ";
+	    if (isset($routeInfo[6]) && $routeInfo[6] != "")  echo "<a href=\"".$routeInfo[6]."\">土曜</a> ";
 	    echo "</label></td>".PHP_EOL;
 	    echo "</tr>".PHP_EOL;
 	    $_id++;
@@ -259,17 +290,18 @@ if (is_array($packedStation)) {
 /////////////////////////////////////////////////////////////////////////////
 ?>
 </table>
+<p style="text-align:center;">
 <?php
 /////////////////////////////////////////////////////////////////////////////
 ////									/////
     if (count($packedStation)) {
-	echo "<td><input type='submit' name='action' value='編集' onclick=\"_post_action='edit'\" disabled>".PHP_EOL;
-	echo "<td><input type='submit' name='action' value='削除' onclick=\"_post_action='delete'\" disabled>".PHP_EOL;
+	echo "<td><input type='submit' name='action' value='編集' style='width:75px;' onclick=\"_post_action='edit'\" disabled>".PHP_EOL;
+	echo "<td><input type='submit' name='action' value='削除' style='width:75px;' onclick=\"_post_action='delete'\" disabled>".PHP_EOL;
     }
 ////									/////
 /////////////////////////////////////////////////////////////////////////////
 ?>
-</form>
+</p></form>
 <hr>
 
 <h3>時刻表編集<span class='note'>・・・新しく時刻表を登録するときはこちらから</span></h3>
@@ -289,31 +321,36 @@ if (is_array($packedStation)) {
 	$url_weekday = $stationInfo['routes'][$route_name][1];
 	$url_saturday= $stationInfo['routes'][$route_name][6];
 	$checked     = $route_name == $primary_root ? "checked='checked'" : "";
-	echo "<tr><td width=60>駅名</td><td width=120><input type='text' name='station_name' value='".$station_name."' onKeyup=\"valid_chk()\" ><span class='note'>LINEから時刻表を呼び出す時この名前を使う</span></td></tr>".PHP_EOL;
+	echo "<tr><td width=70>駅名</td><td width=630><input type='text' name='station_name' value='".$station_name."' onKeyup=\"valid_chk()\" ><span class='note'>LINEから時刻表を呼び出す時この名前を使う</span></td></tr>".PHP_EOL;
 	echo "<tr><td>正式名</td><td><input type='text' name='nickname' value='".$nickname."'><span class='note'>これは念のため</span></td></tr>".PHP_EOL;
 	echo "<tr><td>路線</td><td><input type='text' name='route_name' value='".$route_name." 'onKeyup=\"valid_chk()\"><span class='note'>上り/下り、○○方面、など</span></td></tr>".PHP_EOL;
 	echo "<tr><td>優先</td><td><label><input type='checkbox' name='primary' ".$checked."><span class='note'>利用時は路線名を省略可 省略時に採用する優先路線を一つ指定</span></label></td></tr>".PHP_EOL;
-	echo "<tr><td>URL（平日）</td><td><span class='note'>YAホ～!の時刻表ページを参考にさせていただくのでここにURLをペースト</span><BR><input type='url' name='url_weekday' value='".$url_weekday."' style=\"width:550px;\"></td></tr>".PHP_EOL;
-	echo "<tr><td>URL（休日）</td><td><input type='url' name='url_holiday' value='".$url_holiday."' style=\"width:550px;\"></td></tr>".PHP_EOL;
-	echo "<tr><td>URL（土曜）</td><td><input type='url' name='url_saturday' value='".$url_saturday."' style=\"width:550px;\"></td></tr>".PHP_EOL;
-	echo "<tr><td></td><td><input type='submit' name='action' value='保存' onclick=\"_post_action='save'\">".PHP_EOL;
+	echo "<tr><td>URL（平日）</td><td><span class='note'>YAホ～!の時刻表ページを参考にさせていただくのでここにURLをペースト</span><BR><input type='url' name='url_weekday' value='".$url_weekday."' style=\"width:600px;\"></td></tr>".PHP_EOL;
+	echo "<tr><td>URL（休日）</td><td><input type='url' name='url_holiday' value='".$url_holiday."' style=\"width:600px;\"></td></tr>".PHP_EOL;
+	echo "<tr><td>URL（土曜）</td><td><input type='url' name='url_saturday' value='".$url_saturday."' style=\"width:600px;\"></td></tr>".PHP_EOL;
+	echo "</table>".PHP_EOL;
+	echo "<input type='submit' name='action' value='保存' onclick=\"_post_action='save'\">".PHP_EOL;
     }
     else {
-	echo "<tr><td width=60>駅名</td><td width=100><input type='text' name='station_name' onKeyup=\"valid_chk()\"><span class='note'>LINEから時刻表を呼び出す時この名前を使う</span></td></tr>".PHP_EOL;
+	echo "<tr><td width=70>駅名</td><td width=630><input type='text' name='station_name' onKeyup=\"valid_chk()\"><span class='note'>LINEから時刻表を呼び出す時この名前を使う</span></td></tr>".PHP_EOL;
 	echo "<tr><td>正式名</td><td><input type='text' name='nickname'><span class='note'>これは念のため</span></td></tr>".PHP_EOL;
 	echo "<tr><td>路線</td><td><input type='text' name='route_name' onKeyup=\"valid_chk()\"><span class='note'>上り/下り、○○方面、など</span></td></tr>".PHP_EOL;
 	echo "<tr><td>優先</td><td><label><input type='checkbox' name='primary' value='primary'><span class='note'>利用時は路線名を省略可 省略時に採用する優先路線を一つ指定</span></label></td></tr>".PHP_EOL;
-	echo "<tr><td>URL（平日）</td><td><span class='note'>YAホ～!の時刻表ページを参考にさせていただくのでここにURLをペースト</span><BR><input type='url' name='url_weekday' style=\"width:550px;\"></td></tr>".PHP_EOL;
-	echo "<tr><td>URL（休日）</td><td><input type='url' name='url_holiday' style=\"width:550px;\"></td></tr>".PHP_EOL;
-	echo "<tr><td>URL（土曜）</td><td><input type='url' name='url_saturday' style=\"width:550px;\"></td></tr>".PHP_EOL;
-	echo "<tr><td></td><td><input type='submit' name='action' value='新規作成' onclick=\"_post_action='create'\" disabled>".PHP_EOL;
+	echo "<tr><td>URL（平日）</td><td><span class='note'>YAホ～!の時刻表ページを参考にさせていただくのでここにURLをペースト</span><BR><input type='url' name='url_weekday' style=\"width:600px;\"></td></tr>".PHP_EOL;
+	echo "<tr><td>URL（休日）</td><td><input type='url' name='url_holiday' style=\"width:600px;\"></td></tr>".PHP_EOL;
+	echo "<tr><td>URL（土曜）</td><td><input type='url' name='url_saturday' style=\"width:600px;\"></td></tr>".PHP_EOL;
+	echo "</table>".PHP_EOL;
+	echo "<p style='text-align:center'>";
+	echo "<input type='submit' name='action' value='新規作成' onclick=\"_post_action='create'\" disabled>".PHP_EOL;
     }
 ////									/////
 /////////////////////////////////////////////////////////////////////////////
 ?>
-      <input type="submit" name="action" value="キャンセル"></td></tr>
-</table>
+<input type="submit" name="action" value="キャンセル"></p>
 </form>
+
+</div>
+<div class="main-page">
 
 <!-- ////////////////////////////////////////////////// -->
 <hr>ここから下は触らないで！<br>
@@ -342,7 +379,8 @@ var_dump($_POST);
 echo "<br>\npackedStation<br>\n"; var_dump($packedStation);
 ?>
 
-
+</div>
+</div>
 
 </body>
 </html>

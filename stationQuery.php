@@ -158,7 +158,7 @@ function normalTrainQuery($receivedMessage, $_time, $_station, $_route, &$contex
 
 	// 曜日情報が未設定の時、曜日情報を(再)設定する
 	//
-	if ($context_s['tq']['day_of_the_week'] == -1) {
+	if (!isset($context_s['tq']['day_of_the_week']) || ($context_s['tq']['day_of_the_week'] == -1)) {
 
 	    // 祝祭日のチェック
 	    $holiday_info = getHoliday_info($t_now);
