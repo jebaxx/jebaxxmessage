@@ -53,10 +53,16 @@ div#right-menu {
 	height:100%;
 	padding: 10px;
 }
+
 .section_head {
     padding: 3px 0px 0px 8px; 
 	background: linear-gradient(#eec0c0, #eaeaea);
 }
+
+li.side_menu {
+	padding-top: 5px;
+}
+
 ul.mokuji {
 	margin:0 0 0 1em;
 	padding:0;
@@ -103,36 +109,36 @@ ul.mokuji {
     <hr>
     <h4>メニュー</h4>
     <ul>
-      <li><a href="timetable_setting.php">時刻表の登録・編集</a></li>
-      <li><a href="holiday_maintenance.php">祝日の設定</a></li>
-      <li><a href="tomodachi-catalog.php">ともだちカタログ</a></li>
+      <li class="side_menu"><a href="timetable_setting.php">時刻表の登録・編集</a></li>
+      <li class="side_menu"><a href="holiday_maintenance.php">祝日の設定</a></li>
+      <li class="side_menu"><a href="tomodachi-catalog.php">ともだちカタログ</a></li>
     </ul>
 
     <hr>
     <h4>目次…</h4>
     <small>
     <ul class="mokuji_0">
-      <li><a href="#intro">ぴょん太にできること</a></li>
-      <li><a href="#sec_1">これから出発する電車を調べてくれる</a></li>
+      <li class="side_menu"><a href="#intro">ぴょん太にできること</a></li>
+      <li class="side_menu"><a href="#sec_1">これから出発する電車を調べてくれる</a></li>
         <ul class="mokuji">
-          <li><a href="#usage_a">使い方（LINEアプリ）</a></li>
+          <li class="side_menu"><a href="#usage_a">使い方（LINEアプリ）</a></li>
             <ul class="mokuji">
-              <li><a href="#station_name">「時刻表」＋駅名</a></li>
-              <li><a href="#station_next">つづき・続き・その次</a></li>
-              <li><a href="#station_replay">つぎ・次</a></li>
-              <li><a href="#station_route">路線の指定方法</a></li>
+              <li class="side_menu"><a href="#station_name">「時刻表」＋駅名</a></li>
+              <li class="side_menu"><a href="#station_next">つづき・続き・その次</a></li>
+              <li class="side_menu"><a href="#station_replay">つぎ・次</a></li>
+              <li class="side_menu"><a href="#station_route">路線の指定方法</a></li>
             </ul>
-          <li><a href="#usage_w">使い方（利用する駅の登録方法）</a></li>
-          <li><a href="#cal_">休日・祝日・土曜のダイヤ</a></li>
+          <li class="side_menu"><a href="#usage_w">使い方（利用する駅の登録方法）</a></li>
+          <li class="side_menu"><a href="#cal_">休日・祝日・土曜のダイヤ</a></li>
             <ul class="mokuji">
-              <li><a href="#cal_weekend">土曜・日曜のダイヤ</a></li>
-              <li><a href="#cal_holiday">祝日のダイヤ</a></li>
-              <li><a href="#cal_set_holiday">今日は祝日（休日・土曜・平日）</a></li>
-              <li><a href="#cal_edit_holiday">事前に暦を修正</a></li>
+              <li class="side_menu"><a href="#cal_weekend">土曜・日曜のダイヤ</a></li>
+              <li class="side_menu"><a href="#cal_holiday">祝日のダイヤ</a></li>
+              <li class="side_menu"><a href="#cal_set_holiday">今日は祝日（休日・土曜・平日）</a></li>
+              <li class="side_menu"><a href="#cal_edit_holiday">事前に暦を修正</a></li>
             </ul>
         </ul>
-      <li><a href="#sec_2">２．部屋の温度と気圧を教えてくれる</a></li>
-      <li><a href="#important_point">利用上の注意事項</a></li>
+      <li class="side_menu"><a href="#sec_2">２．部屋の温度と気圧を教えてくれる</a></li>
+      <li class="side_menu"><a href="#important_point">利用上の注意事項</a></li>
     </ul>
     </small>
 
@@ -140,11 +146,11 @@ ul.mokuji {
     <small>
     <h4>参考リンク</h4>
     <ul>
-      <li><a href="https://jebaxxmonitor.appspot.com/index.html">現在の気温・気圧</a></li>
-      <li><a href="https://github.com/jebaxx/jebaxxmessage">プログラム・ソース</a></li>
-      <li><a href="https://developers.line.me/ja/">LINEアプリ開発</a></li>
-      <li><a href="https://admin-official.line.me/">LINE Manager</a></li>
-      <li><a href="https://console.cloud.google.com/home/dashboard?project=jebaxxmessage">google cloud platform管理ページ</a></li>
+      <li class="side_menu"><a href="https://jebaxxmonitor.appspot.com/index.html">現在の気温・気圧</a></li>
+      <li class="side_menu"><a href="https://github.com/jebaxx/jebaxxmessage">プログラム・ソース</a></li>
+      <li class="side_menu"><a href="https://developers.line.me/ja/">LINEアプリ開発</a></li>
+      <li class="side_menu"><a href="https://admin-official.line.me/">LINE Manager</a></li>
+      <li class="side_menu"><a href="https://console.cloud.google.com/home/dashboard?project=jebaxxmessage">google cloud platform管理ページ</a></li>
     </ul>
     </small>
     <hr>

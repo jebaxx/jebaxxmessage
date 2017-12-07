@@ -121,9 +121,10 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "再取得")) get_tomodach
   <table>
   <tr>
     <th width=270>ID</th>
-    <th width=120>displayName</th>
+    <th width=120 style="text-align:left">displayName</th>
     <th width=130>picture</th>
-    <th width=200>statusMessage</th>
+    <th width=200 style="text-align:left">statusMessage</th>
+    <th width=120 style="text-align:left">Modified time</th>
   </tr>
   <?php
     if (($r_hndl = fopen($gs_tomo_csv, "r")) == FALSE) {
@@ -141,6 +142,11 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "再取得")) get_tomodach
 	echo "    <td>".$profile_line[1]."</td>".PHP_EOL;
 	echo "    <td><img src=".$profile_line[2]." width=120></td>".PHP_EOL;
 	echo "    <td>".$profile_line[3]."</td>".PHP_EOL;
+
+	$file_stat = stat($gs_prefix . "context_" . $profile_line[0] . ".pac");
+	$mtime = new DateTime();
+	$mtime->setTimestamp($file_stat['mtime']);
+	echo "    <td>".$mtime->format('Y/m/d H:i')."</td>".PHP_EOL;
 	echo "  </tr>".PHP_EOL;
     }
 

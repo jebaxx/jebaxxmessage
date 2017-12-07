@@ -45,16 +45,30 @@
 	if ($hh_node_list->length == 0) throw new UnexpectedValueException("cannot detect expected nodes");
 
 	foreach ($hh_node_list as $h_node) {
-	    echo $h_node->nodeValue.":";
+	    echo $h_node->nodeValue." : ";
 	    $mm_node_list = $xpath->query("..//li[@class='timeNumb']//dt", $h_node);
 	    if ($mm_node_list->length == 0) throw new UnexpectedValueException("cannot detect expected 'timeNumb' class nodes");
 
 	    foreach ($mm_node_list as $m_node) {
-	        $m_val  = $m_node->nodeValue;
+		$m_val  = $m_node->nodeValue;
+		$o_vals = "";
+	    //////////////////////////////////////////////////////////
+	    // 始発駅マーク対策
+	        $subNode_list = $xpath->query("./*", $m_node);
+	        if ($subNode_list->length != 0) {
+	            foreach ($subNode_list as $subNode) {
+	        	$o_val = $subNode->nodeValue;
+	        	//echo "$$$ ".$o_val." $$$";
+	        	preg_match("/^(.*)".$o_val."(.*)/", $m_val,$result);
+	        	$m_val = $result[1].$result[2];
+	        	//echo "&&& ".$m_val." &&&";
+	        	$o_vals .= $o_val;
+	            }
+	        }
+	    //////////////////////////////////////////////////////////
 		$o_list = $xpath->query("../dd", $m_node);
-		$o_val = "";
-		foreach ($o_list as $o_node) $o_val .= $o_node->nodeValue;
-	        echo $m_val." ".$o_val." ";
+		foreach ($o_list as $o_node) $o_vals .= $o_node->nodeValue;
+	        echo $m_val." ".$o_vals."  ";
 	    }
 	    echo "<br>".PHP_EOL;
 	    	

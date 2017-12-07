@@ -117,10 +117,20 @@ span.note {
 
 		foreach ($mm_node_list as $m_node) {
 		    $m_val  = $m_node->nodeValue;
+		    $o_vals = "";
+		    ////////////////////////////////////////////////////
+		    // apply span node (class='mark')
+		    $subNode_list = $xpath->query("./*", $m_node);
+		    for ($i = 0; $i < $subNode_list->length; $i++) {
+		    	$o_val = $subNode_list->item($i)->nodeValue;
+		    	preg_match("/^(.*)".$o_val."(.*)$/", $m_val, $result);
+		    	$m_val = $result[1].$result[2];
+		    	$o_vals .= $o_val;
+		    }
+		    ////////////////////////////////////////////////////
 		    $o_list = $xpath->query("../dd", $m_node);
-		    $o_val = "";
-		    foreach ($o_list as $o_node) $o_val .= $o_node->nodeValue;
-		    $csv_content .= $h_val.",".$m_val.",".($o_val!="" ? '"'.$o_val.'"':"").PHP_EOL;
+		    foreach ($o_list as $o_node) $o_vals .= $o_node->nodeValue;
+		    $csv_content .= $h_val.",".$m_val.",".($o_vals!="" ? '"'.$o_vals.'"':"").PHP_EOL;
 		}
 	    }
 	}
@@ -177,7 +187,7 @@ span.note {
 
     	    if ($stationInfo['routes'][$route_name][0] != "") {
 		$html_content = file_get_contents($stationInfo['routes'][$route_name][0]);
-		$csv_content  = htmlspecialchars(convert_html_to_csv($html_content));
+		$csv_content  = convert_html_to_csv($html_content);
 
 	        $gs_route_name = $gs_route_prefix . "/_".$station_name."-".$route_name."-0.csv";
 		file_put_contents($gs_route_name, $csv_content);
@@ -185,7 +195,7 @@ span.note {
 
 	    if ($stationInfo['routes'][$route_name][1] != "") {
     		$html_content = file_get_contents($stationInfo['routes'][$route_name][1]);
-		$csv_content  = htmlspecialchars(convert_html_to_csv($html_content));
+		$csv_content  = convert_html_to_csv($html_content);
 
 	        $gs_route_name = $gs_route_prefix . "/_".$station_name."-".$route_name."-1.csv";
 		file_put_contents($gs_route_name, $csv_content);
@@ -193,7 +203,7 @@ span.note {
 
 	    if ($stationInfo['routes'][$route_name][6] != "") {
     		$html_content = file_get_contents($stationInfo['routes'][$route_name][6]);
-		$csv_content  = htmlspecialchars(convert_html_to_csv($html_content));
+		$csv_content  = convert_html_to_csv($html_content);
 
 	        $gs_route_name = $gs_route_prefix . "/_".$station_name."-".$route_name."-6.csv";
 		file_put_contents($gs_route_name, $csv_content);
@@ -253,9 +263,9 @@ span.note {
 <table>
 <thead>
 <tr>
-  <th width=50>選択</th>
-  <th width=130>駅名</th>
-  <th width=130>正式名</th>
+  <th width=50 style="text-align:left">選択</th>
+  <th width=130 style="text-align:left">駅名</th>
+  <th width=130 style="text-align:left">正式名</th>
   <th width=100>路線</th>
   <th width=80>優先</th>
   <th width=120>登録済URL</th>
@@ -311,7 +321,7 @@ if (is_array($packedStation)) {
 <?php
 /////////////////////////////////////////////////////////////////////////////
 ////									/////
-    if ($_POST['action'] == '編集') {
+    if (isset($_POST['action']) && ($_POST['action'] == '編集')) {
 	$station_name = trim($_POST['station_name']);
 	$route_name   = trim($_POST['route_name']);
 	$stationInfo = $packedStation[$station_name];
@@ -321,10 +331,10 @@ if (is_array($packedStation)) {
 	$url_weekday = $stationInfo['routes'][$route_name][1];
 	$url_saturday= $stationInfo['routes'][$route_name][6];
 	$checked     = $route_name == $primary_root ? "checked='checked'" : "";
-	echo "<tr><td width=70>駅名</td><td width=630><input type='text' name='station_name' value='".$station_name."' onKeyup=\"valid_chk()\" ><span class='note'>LINEから時刻表を呼び出す時この名前を使う</span></td></tr>".PHP_EOL;
-	echo "<tr><td>正式名</td><td><input type='text' name='nickname' value='".$nickname."'><span class='note'>これは念のため</span></td></tr>".PHP_EOL;
-	echo "<tr><td>路線</td><td><input type='text' name='route_name' value='".$route_name." 'onKeyup=\"valid_chk()\"><span class='note'>上り/下り、○○方面、など</span></td></tr>".PHP_EOL;
-	echo "<tr><td>優先</td><td><label><input type='checkbox' name='primary' ".$checked."><span class='note'>利用時は路線名を省略可 省略時に採用する優先路線を一つ指定</span></label></td></tr>".PHP_EOL;
+	echo "<tr><td width=70>駅名</td><td width=630><input type='text' name='station_name' value='".$station_name."' onKeyup=\"valid_chk()\" ><span class='note'>LINEから時刻表を呼び出す時に分かりやすい名前をつける</span></td></tr>".PHP_EOL;
+	echo "<tr><td>正式名</td><td><input type='text' name='nickname' value='".$nickname."'><span class='note'>これは今は使っていないが念のため設定する</span></td></tr>".PHP_EOL;
+	echo "<tr><td>路線</td><td><input type='text' name='route_name' value='".$route_name." 'onKeyup=\"valid_chk()\"><span class='note'>上り/下り、○○方面、など。これも利用時に分かりやす名前であればよい。</span></td></tr>".PHP_EOL;
+	echo "<tr><td>優先</td><td><label><input type='checkbox' name='primary' ".$checked."><span class='note'>利用時は路線名を省略可 省略時に採用する優先路線を各駅に一つ指定</span></label></td></tr>".PHP_EOL;
 	echo "<tr><td>URL（平日）</td><td><span class='note'>YAホ～!の時刻表ページを参考にさせていただくのでここにURLをペースト</span><BR><input type='url' name='url_weekday' value='".$url_weekday."' style=\"width:600px;\"></td></tr>".PHP_EOL;
 	echo "<tr><td>URL（休日）</td><td><input type='url' name='url_holiday' value='".$url_holiday."' style=\"width:600px;\"></td></tr>".PHP_EOL;
 	echo "<tr><td>URL（土曜）</td><td><input type='url' name='url_saturday' value='".$url_saturday."' style=\"width:600px;\"></td></tr>".PHP_EOL;
@@ -332,10 +342,10 @@ if (is_array($packedStation)) {
 	echo "<input type='submit' name='action' value='保存' onclick=\"_post_action='save'\">".PHP_EOL;
     }
     else {
-	echo "<tr><td width=70>駅名</td><td width=630><input type='text' name='station_name' onKeyup=\"valid_chk()\"><span class='note'>LINEから時刻表を呼び出す時この名前を使う</span></td></tr>".PHP_EOL;
-	echo "<tr><td>正式名</td><td><input type='text' name='nickname'><span class='note'>これは念のため</span></td></tr>".PHP_EOL;
-	echo "<tr><td>路線</td><td><input type='text' name='route_name' onKeyup=\"valid_chk()\"><span class='note'>上り/下り、○○方面、など</span></td></tr>".PHP_EOL;
-	echo "<tr><td>優先</td><td><label><input type='checkbox' name='primary' value='primary'><span class='note'>利用時は路線名を省略可 省略時に採用する優先路線を一つ指定</span></label></td></tr>".PHP_EOL;
+	echo "<tr><td width=70>駅名</td><td width=630><input type='text' name='station_name' onKeyup=\"valid_chk()\"><span class='note'>LINEから時刻表を呼び出す時に分かりやすい名前をつける</span></td></tr>".PHP_EOL;
+	echo "<tr><td>正式名</td><td><input type='text' name='nickname'><span class='note'>これは今は使っていないが念のため設定する</span></td></tr>".PHP_EOL;
+	echo "<tr><td>路線</td><td><input type='text' name='route_name' onKeyup=\"valid_chk()\"><span class='note'>上り/下り、○○方面、など。これも利用時に分かりやす名前であればよい。</span></td></tr>".PHP_EOL;
+	echo "<tr><td>優先</td><td><label><input type='checkbox' name='primary' value='primary'><span class='note'>利用時は路線名を省略可 省略時に採用する優先路線を各駅に一つ指定</span></label></td></tr>".PHP_EOL;
 	echo "<tr><td>URL（平日）</td><td><span class='note'>YAホ～!の時刻表ページを参考にさせていただくのでここにURLをペースト</span><BR><input type='url' name='url_weekday' style=\"width:600px;\"></td></tr>".PHP_EOL;
 	echo "<tr><td>URL（休日）</td><td><input type='url' name='url_holiday' style=\"width:600px;\"></td></tr>".PHP_EOL;
 	echo "<tr><td>URL（土曜）</td><td><input type='url' name='url_saturday' style=\"width:600px;\"></td></tr>".PHP_EOL;
