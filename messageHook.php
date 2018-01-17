@@ -182,6 +182,10 @@ function messageDispatcher($receivedMessage, &$context_s, &$context_u) {
 	}
     }
 
+    if (($receivedMessage == "いせ") || ($receivedMessage == "伊勢")) {
+    	return("https://jebaxxMessage.appspot.com/travel_plan.html");
+    }
+
     return(null);
 }
 

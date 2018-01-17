@@ -26,15 +26,21 @@ handlers:
   application_readable: true
 
 #images
-- url: /images/(.+\.(JPG|jpeg))$
+- url: /images/(.+\.(JPG|jpeg|gif))$
   static_files: images/\1
-  upload: images/(.+\.(JPG|jpeg))
+  upload: images/(.+\.(JPG|jpeg|gif))
   application_readable: true
 
-#converter test page
+#main page
 - url: /index53.html
   static_files: index53.html
   upload: index53.html
+  application_readable: true
+
+#other page in home
+- url: /travel_plan.html
+  static_files: travel_plan.html
+  upload: travel_plan.html
   application_readable: true
 
 #/*.php

@@ -1,0 +1,773 @@
+<html lang="ja">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=480">
+
+<title>Travel to Nanki</title>
+
+<style type="text/css">
+
+/******************************
+ ***** H1 *********************
+ ******************************/
+
+h1 {
+	font-size:20;
+	padding-left: 12px;
+	line-height: 2.0;
+	margin: 35px 5px 45px 0px;
+	vertical-align: middle;
+	width: 450;
+	background-color: #ffb0b0;
+	box-shadow: 10px 10px 30px rgba(90,10,10,0.75);
+	border:1px solid #325A8C;
+	border-radius:27px 0px 0px 27px;
+	position: relative;
+}
+h1:before {
+	content: '● ';
+	color: #981313;
+}
+
+/******************************
+ ***** IMG ********************
+ ******************************/
+img {
+	box-shadow: 2px 5px 10px #7070b0;
+}
+
+/******************************
+ ***** Pop up DIV *************
+ ******************************/
+div.disp_box {
+	position: relative;
+}
+
+.tool-tips {
+	display:none;
+	bottom: 200;
+	left: 10;
+	padding: 15;
+	position: fixed;
+	background-color: #137;
+	font-size:large;
+/*	z-index: 0;	*/
+	color: #fff;
+}
+.tool-tips table tr {
+	color: #fff;
+}
+.tool-tips a:link {
+	color:#da3;
+}
+.tool-tips a:visited {
+	color:#da3;
+}
+.tool-tips table tr.primary {
+	font-weight:bold;
+	color:#ff0;
+}
+
+/******************************
+ ***** TABLE small-text *******
+ ******************************/
+table.small-text {
+	border-collapse: collapse;
+	line-height: 1.8;
+	font-size:14px;
+	box-shadow: 2px 5px 10px #7070b0;
+}
+
+table.small-text thead th {
+	background: #003060;
+	color: #fff;
+}
+
+table.small-text tr.odd-line {
+	background: #f2f5f6;
+	border-top: 1px solid #ccc;
+}
+
+table.small-text tr.stay-point {
+	line-height: 2.8;
+	background: #f3ffaf;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+}
+
+table.small-text tr.stay-point td{
+	padding-left: 2em;
+}
+
+td.c {
+	text-align:center;
+}
+
+td.odd-line {
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+}
+
+/******************************
+ ***** UL & LI ****************
+ ******************************/
+ul.type_1, ul.type_2, ul.type_1 li, ul.type_2 li {
+	padding: 0;
+/*	position: relative; */
+}
+
+tr.bad td, tr.bad th{
+	color:#88a;
+}
+
+ul.type_1 li {
+	color: #4a71b8;
+	border-left: solid 6px #5a8ed2;
+	border-bottom: solid 1px #c0c0c0;
+	border-top: solid 2px #ffffff;
+	background:  #edf4ff;
+	margin-bottom: 3px;
+	line-height: 1.7;
+	padding: 0.5em;
+	list-style-type: none!important;
+/*	z-index: 999;	*/
+}
+
+ul.type_1 li a {
+	color: #496fb5;
+	text-decoration:none;
+}
+
+ul.type_2 li {
+	color: #727a4a;
+	border-left: solid 6px #889855;
+	border-bottom: solid 1px #c0c0c0;
+	border-top: solid 2px #ffffff;
+	background:  #f2ffe0;
+	margin-bottom: 3px;
+	line-height: 1.7;
+	padding: 0.5em;
+	list-style-type: none!important;
+/*	z-index: 999;	*/
+}
+
+ul.type_2 li a {
+	color: #707949;
+	text-decoration:none;
+}
+
+li.disable a {
+	color: #999999!important;
+}
+
+</style>
+
+<script type = "text/javascript">
+
+  _area = "default";
+
+  function disp_tips(_area_id) {
+
+  	if (_area != "default") {
+  		_area.style.display = "none";
+  		_area = "default";
+  	}
+
+  	if (_area_id != "default") {
+		_area = document.getElementById(_area_id);
+		_area.style.display = "block";
+	}
+  }
+
+</script>
+
+</head>
+
+<body>
+<!--
+*************************************************
+********************* TITLE **********************
+*************************************************
+ -->
+
+<h1>修学旅行のしおり</h1>
+<h4>2017/12/26～28 伊勢・熊野</h4>
+
+
+
+<ul class="type_1">
+  <li>
+    <a href="https://www.google.com/maps/d/embed?mid=1Ssk0vCLUZePiJSq4N4u9m4WjT-NNy78f">Google地図</a>
+  </li>
+  <li>
+    <a href="https://www.navitime.co.jp/">NAVITIME</a>
+  </li>
+  <li>
+    <a href="http://www.jr.cyberstation.ne.jp/vacancy/Vacancy.html">JR 空席案内</a>
+  </li>
+  <li>
+    <a href="https://docs.google.com/spreadsheets/d/1l6XV_poF7VImXOodhDvs6Hk9auSQBa9c1NX0jGXtFYE/edit#gid=735799207">グループ行動計画</a>
+  </li>
+</ul>
+<hr>
+<!--
+*************************************************
+********************* DAY 1 *********************
+*************************************************
+ -->
+<h1>1日目（12/26）</h1>
+<table class="small-text">
+
+<colgroup>
+  <col span="1" style="width:45; background-color:#f3f6f7">
+  <col span="1" style="width:80">
+  <col span="1" style="width:90">
+  <col span="1" style="width:80">
+  <col span="1" style="width:190">
+</colgroup>
+
+<thead>
+<tr> <th>乗換</th><th>出発</th><th></th><th>到着</th><th>備考</th> </tr>
+</thead>
+<tbody>
+<tr class="odd-line"> <td></td><td class="c">南大沢</td><td class="c">―→</td><td class="c">橋本</td><td>京王線</td> </tr>
+<tr> <td class="odd-line" rowspan="2">14分</td><td class="c">5:27</td><td class="c">5分</td><td class="c">5:32</td><td>￥143</td> </tr>
+
+<tr class="odd-line"> <td class="c">橋本</td><td class="c">―→</td><td class="c">新横浜</td><td>JR横浜線</td> </tr>
+<tr> <td class="odd-line" rowspan="2">14分</td><td class="c">5:46</td><td class="c">34分</td><td class="c">6:20</td><td>￥302(長津田まで)</td> </tr>
+
+<tr class="odd-line"> <td class="c">新横浜</td><td class="c">―→</td><td class="c">名古屋</td><td>のぞみ3号</td> </tr>
+<tr> <td class="odd-line" rowspan="2">15分</td><td class="c">6:34</td><td class="c">1時間17分</td><td class="c">7:51</td><td>12号車 12-D/E</td> </tr>
+
+<tr class="odd-line"> <td class="c">名古屋</td><td class="c">―→</td><td class="c">新宮</td><td>ワイドビュー南紀1号</td> </tr>
+<tr> <td></td><td class="c">8:05</td><td class="c">3時間29分</td><td class="c">11:34</td><td>3号車 3-A/B</td> </tr>
+
+<tr class="stay-point"> <td colspan="5">速玉大社/神倉神社拝観　滞在：2時間04分</td> </tr>
+
+<tr class="odd-line"> <td></td><td class="c">新宮</td><td class="c">―→</td><td class="c">紀伊勝浦</td><td>ワイドビュー南紀3号</td> </tr>
+<tr> <td class="odd-line" rowspan="2">14分</td><td class="c">13:39</td><td class="c">17分</td><td class="c">13:56</td><td>\1,610</td> </tr>
+
+<tr class="odd-line"> <td class="c">勝浦駅</td><td class="c">―→</td><td class="c">大門坂駐車場前</td><td>熊野交通バス 那智山行き</td> </tr>
+<tr> <td></td><td class="c">14:10</td><td class="c">19分</td><td class="c">14:29</td><td>\420</td> </tr>
+
+<tr class="stay-point"> <td colspan="5">那智大社拝観/那智滝　滞在：1時間56分</td> </tr>
+
+<tr class="odd-line"> <td class="odd-line" rowspan="2">-</td><td class="c">那智山</td><td class="c">―→</td><td class="c">勝浦駅</td><td>熊野交通バス 勝浦行き</td> </tr>
+<tr> <td class="c">16:25</td><td class="c">25分</td><td class="c">16:50</td><td>\620</td> </tr>
+
+<tr class="stay-point"> <td colspan="5">宿泊　浦御苑</td> </tr>
+
+</tbody>
+</table>
+
+
+  <p style="padding: 30px 0px">熊野地域マップ<br><img src="images/nanki_ohro.gif" alt="往路路線図" usemap="#point"/></p>
+  <map name="point">
+    <area shape="circle" coords="62,77,30" alt="南大沢" onclick="disp_tips('minamio-o')">
+    <area shape="circle" coords="62,124,30" alt="橋本：京王線" onclick="disp_tips('hashimoto-o')">
+    <area shape="circle" coords="62,166,30" alt="橋本：横浜線" onclick="disp_tips('hashimoto-y')">
+    <area shape="circle" coords="62,211,30" alt="新横浜：横浜線" onclick="disp_tips('shinyoko-y')">
+    <area shape="circle" coords="62,250,30" alt="新横浜：新幹線" onclick="disp_tips('shinyoko-s')">
+    <area shape="circle" coords="62,295,30" alt="名古屋：新幹線" onclick="disp_tips('nagoya-s')">
+    <area shape="circle" coords="62,336,30" alt="名古屋：紀伊方面" onclick="disp_tips('nagoya-k')">
+    <area shape="circle" coords="62,400,30" alt="新宮：上り" onclick="disp_tips('shingu-u2')">
+    <area shape="circle" coords="176,400,30" alt="バス：新宮：本宮大社方面" onclick="disp_tips('shingu-hon')">
+    <area shape="circle" coords="306,400,30" alt="バス：本宮大社：新宮行き" onclick="disp_tips('hongu-shingu')">
+
+    <area shape="circle" coords="62,440,30" alt="新宮：下り" onclick="disp_tips('shingu-d')">
+    <area shape="circle" coords="103,440,30" alt="バス：新宮：速玉大社方面" onclick="disp_tips('shingu-htm')">
+    <area shape="circle" coords="183,440,30" alt="バス：速玉大社：新宮行き" onclick="disp_tips('hayatama-shingu')">
+
+    <area shape="circle" coords="62,486,30" alt="紀伊勝浦：新宮/多気方面" onclick="disp_tips('katsuura-u')">
+
+    <area shape="circle" coords="127,510,30" alt="バス：紀伊勝浦：那智大社方面" onclick="disp_tips('katsuura-nac')">
+    <area shape="circle" coords="310,510,30" alt="バス：那智山：紀伊勝浦行き" onclick="disp_tips('ohmon-b')">
+    <area shape="circle" coords="185,510,30" alt="バス：大門坂：紀伊勝浦行き" onclick="disp_tips('ohmon-b')">
+    <area shape="circle" coords="255,510,30" alt="バス：大門坂：那智山" onclick="disp_tips('katsuura-nac')">
+
+    <area shape="circle" coords="327,360,30" alt="バス：本宮大社：古道へ" onclick="disp_tips('shingu-hon')">
+    <area shape="circle" coords="327,276,30" alt="バス：道の駅：発心王子へ" onclick="disp_tips('shingu-hon')">
+    <area shape="circle" coords="327,231,30" alt="バス：発心王子：本宮大社へ" onclick="disp_tips('hongu-shingu')">
+    <area shape="circle" coords="327,314,30" alt="バス：道の駅：本宮大社へ" onclick="disp_tips('hongu-shingu')">
+
+    <area shape="default" alt="選択解除" onclick="disp_tips('default')">
+  </map>
+
+<!--
+*************************************************
+*************** DAY 1 Pop Up ********************
+*************************************************
+ -->
+<div class="disp_box">
+<span class="tool-tips" id="minamio-o">南大沢　下り<br> 5:27 </span>
+<span class="tool-tips" id="hashimoto-o">橋本　京王線</span>
+<span class="tool-tips" id="hashimoto-y">橋本　横浜線<br> 5:46 </span>
+<span class="tool-tips" id="shinyoko-y">新横浜　横浜線</span>
+<span class="tool-tips" id="shinyoko-s">新横浜　新幹線<br> 6:34 のぞみ3号(7:51着） </span>
+<span class="tool-tips" id="nagoya-s">名古屋　新幹線<br> 17:22 のぞみ176号(18:44着） </span>
+<span class="tool-tips" id="nagoya-k">名古屋　関西本線<br> 8:05 南紀1号(11:56紀伊勝浦着） </span>
+
+<span class="tool-tips" id="shingu-hon">バス：新宮駅 → 本宮大社<br>
+<table>
+<tr><th colspan="2" style="text-align: left">|← \1,540</th><th colspan="3" style="text-align: center">→｜←</th></th><th></th><th>\460</th><th></th><th style="text-align: right">→|</th><td></tr>
+<tr><th>新宮駅</th><th>→</th><th colspan="3">本宮大社前</th><th> → </th><th>道の駅<br>奥熊野</th><th>→</th><th>発心王子</th><td></tr>
+<tr><td>05:53</td><td>→</td><td>07:14</td><td>|<td>07:30</td><td> → </td><td>07:35</td><td>→</td><td>07:45</td><td></tr>
+<tr><td>07:10</td><td>→</td><td>08:11</td><td>|<td>08:35</td><td> → </td><td>08:40</td><td>→</td><td>08:50</td><td></tr>
+<tr><td>07:46</td><td>→</td><td>09:07</td><td>|<td>09:20</td><td> → </td><td>09:25</td><td>→</td><td>09:35</td><td></tr>
+<tr class="primary"><td>08:40</td><td>→</td><td>09:41</td><td>|<td>10:10</td><td> → </td><td>10:15</td><td>→</td><td>10:25</td><td></tr>
+<tr><td>09:59</td><td>→</td><td>11:20</td><td>|<td></td><td></td><td></td><td></td><td></td><td></tr>
+<tr><td>10:47</td><td>→</td><td>11:36</td><td>|<td>12:00</td><td> → </td><td>12:05</td><td>→</td><td>12:15</td><td></tr>
+<tr><td>11:15</td><td>→</td><td>12:16</td><td>|<td></td><td></td><td></td><td></td><td></td><td></tr>
+<tr><td>11:26</td><td>→</td><td>12:17</td><td>|<td></td><td></td><td></td><td></td><td></td><td></tr>
+<tr><td>12:15</td><td>→</td><td>13:16</td><td>|<td>13:45</td><td> → </td><td>13:50</td><td>→</td><td>14:00</td><td></tr>
+<tr><td>13:46</td><td>→</td><td>14:37</td><td>|<td>14:45</td><td> → </td><td>14:50</td><td>→</td><td>冬季運休</td><td></tr>
+</table>
+</span>
+
+<span class="tool-tips" id="hongu-shingu">バス：本宮大社　→　新宮駅<br>
+<table>
+<tr><th colspan="2" style="text-align: left">|← \1,540</th><th colspan="3" style="text-align: center">→｜←</th></th><th></th><th>\460</th><th></th><th style="text-align: right">→|</th><td></tr>
+<tr><th>新宮駅</th><th>←</th><th colspan="3">本宮大社前</th><th> ← </th><th>道の駅<br>奥熊野</th><th>←</th><th>発心王子</th><td></tr>
+<tr class="primary"><td>12:16</td><td>←</td><td>11:15</td><td>|<td></td><td></td><td></td><td></td><td></td><td></tr>
+<tr><td>12:43</td><td>←</td><td>11:50</td><td>|<td></td><td></td><td></td><td></td><td></td><td></tr>
+<tr><td>14:21</td><td>←</td><td>13:20</td><td>|<td>12:40</td><td> ← </td><td>12:33</td><td>←</td><td>12:23</td><td></tr>
+<tr><td>15:21</td><td>←</td><td>14:20</td><td>|<td></td><td></td><td></td><td></td><td></td><td></tr>
+<tr><td>15:47</td><td>←</td><td>14:23</td><td>|<td></td><td></td><td></td><td></td><td></td><td></tr>
+<tr><td>16:12</td><td>←</td><td>15:20</td><td>|<td>15:10</td><td> ← </td><td>15:03</td><td>←</td><td>14:53</td><td></tr>
+<tr><td>17:11</td><td>←</td><td>16:10</td><td>|<td></td><td></td><td></td><td></td><td></td><td></tr>
+<tr><td>18:24</td><td>←</td><td>16:58</td><td>|<td></td><td></td><td></td><td></td><td></td><td></tr>
+<tr><td>20:22</td><td>←</td><td>18:58</td><td>|<td></td><td></td><td></td><td></td><td></td><td></tr>
+</table>
+</span>
+
+<span class="tool-tips" id="shingu-d">新宮　紀勢線：下り<br>
+<table>
+<tr>
+  <th>新宮</th><th></th><th>紀伊勝浦</th><th width=90>料金</th>
+</tr>
+<tr> <td>11:35</td><td>→</td><td>11:56</td><td>\1,610</td><td>ワイドビュー南紀1号</td> </tr>
+<tr> <td>12:43</td><td>→</td><td>12:58</td><td>\1,610</td><td>くろしお22号</td> </tr>
+<tr> <td>12:50</td><td>→</td><td>13:16</td><td>\240</td><td>普通</td> </tr>
+<tr class="primary"> <td>13:39</td><td>→</td><td>13:56</td><td>\1,610</td><td>ワイドビュー南紀3号</td> </tr>
+<tr> <td>14:18</td><td>→</td><td>14:34</td><td>\1,610</td><td>くろしお26号</td> </tr>
+<tr> <td>14:21</td><td>→</td><td>14:43</td><td>\240</td><td>普通</td> </tr>
+<tr> <td>15:40</td><td>→</td><td>15:56</td><td>\1,610</td><td>くろしお30号</td> </tr>
+<tr> <td>15:46</td><td>→</td><td>16:08</td><td>\240</td><td>普通</td> </tr>
+<tr> <td>16:25</td><td>→</td><td>16:42</td><td>\1,610</td><td>ワイドビュー南紀5号</td> </tr>
+<tr> <td>17:06</td><td>→</td><td>17:37</td><td>\240</td><td>普通</td> </tr>
+<tr> <td>17:55</td><td>→</td><td>18:10</td><td>\1,610</td><td>くろしお34号</td> </tr>
+<tr> <td>18:06</td><td>→</td><td>18:28</td><td>\240</td><td>普通</td></tr>
+<tr> <td>19:07</td><td>→</td><td>19:38</td><td>\240</td><td>普通</td></tr>
+</table>
+<a href="http://www.ekikara.jp/newdata/line/2701081/down1_3.htm">時刻表</a>
+　<a href="http://www.kumakou.co.jp/bus/jikoku_item_4.html">…他にバスも利用可（約30分間隔：\620）</a>
+</span>
+
+<span class="tool-tips" id="shingu-htm">バス：新宮　速玉大社方面<br>
+約30分置きに出ているが、乗車時間4分なので徒歩で！
+</span>
+
+<span class="tool-tips" id="hayatama-shingu">バス：速玉大社　新宮行き<br>
+約30分置きに出ているが、乗車時間4分なので徒歩で！
+</span>
+
+<span class="tool-tips" id="katsuura-u">紀伊勝浦　上り<br>
+<table>
+<tr> <th>紀伊勝浦</th><th></th><th width=70 >新宮</th><th width=90>料金</th> </tr>
+<tr> <td>07:18</td><td>→</td><td>07:43</td><td>\240</td><td>普通</td> </tr>
+<tr class="primary"> <td>07:43</td><td>→</td><td>08:07</td><td>\240</td><td>普通</td> </tr>
+<tr> <td>08:23</td><td>→</td><td>08:50</td><td>\240</td><td>普通</td> </tr>
+<tr> <td>08:43</td><td>→</td><td>09:08</td><td>\240</td><td>普通</td> </tr>
+<tr> <td>08:55</td><td>→</td><td>09:12</td><td>\1,610</td><td>ワイドビュー南紀4号</td> </tr>
+<tr> <td>10:07</td><td>→</td><td>10:40</td><td>\240</td><td>普通</td> </tr>
+<tr> <td>11:34</td><td>→</td><td>11:49</td><td>\1,610</td><td>くろしお1号</td> </tr>
+<tr> <td>12:24</td><td>→</td><td>12:41</td><td>\1,610</td><td>ワイドビュー南紀6号</td> </tr>
+<tr> <td>12:59</td><td>→</td><td>13:15</td><td>\1,610</td><td>くろしお3号</td> </tr>
+<tr> <td>13:26</td><td>→</td><td>13:51</td><td>\240</td><td>普通</td> </tr>
+<tr> <td>15:03</td><td>→</td><td>15:20</td><td>\1,610</td><td>くろしお9号</td> </tr>
+<tr> <td>15:35</td><td>→</td><td>16:11</td><td>\240</td><td>普通</td> </tr>
+<tr> <td>17:03</td><td>→</td><td>17:19</td><td>\1,610</td><td>くろしお13号</td> </tr>
+</table>
+<a href="http://www.ekikara.jp/newdata/line/2701081/up1_1.htm">時刻表</a>
+　<a href="http://www.kumakou.co.jp/bus/jikoku_item_4.html">…他にバスも利用可（約30分間隔：\620）</a>
+</span>
+
+<span class="tool-tips" id="katsuura-nac">バス：紀伊勝浦　那智大社方面<br>
+<table>
+<tr><th style="text-align:left" colspan="2">|← \420</th><th style="text-align: right">→|</th></tr>
+<tr><th style="text-align:left" colspan="6">|← \620 （往復券：\1,000）</th><th>→|</th>
+</tr>
+<tr><th>紀伊勝浦</th><th>→</th><th>大門坂</th><th>→</th><th>那智の滝</th><th>→</th><th>那智山</th></tr>
+<tr><td>06:45</td><td>→</td><td>07:04</td><td>→</td><td>07:09</td><td>→</td><td>07:10</td>
+<tr><td>07:25</td><td>→</td><td>07:44</td><td>→</td><td>07:49</td><td>→</td><td>07:50</td>
+<tr><td>08:25</td><td>→</td><td>08:44</td><td>→</td><td>08:49</td><td>→</td><td>08:50</td>
+<tr><td>08:55</td><td>→</td><td>09:14</td><td>→</td><td>09:19</td><td>→</td><td>09:20</td>
+<tr><td>09:30</td><td>→</td><td>09:49</td><td>→</td><td>09:54</td><td>→</td><td>09:55</td>
+<tr><td>10:25</td><td>→</td><td>10:44</td><td>→</td><td>10:49</td><td>→</td><td>10:50</td>
+<tr><td>11:05</td><td>→</td><td>11:24</td><td>→</td><td>11:29</td><td>→</td><td>11:30</td>
+<tr><td>12:10</td><td>→</td><td>12:29</td><td>→</td><td>12:34</td><td>→</td><td>12:35</td>
+<tr><td>12:10</td><td>→</td><td>13:29</td><td>→</td><td>13:34</td><td>→</td><td>13:35</td>
+<tr class="primary"><td>14:10</td><td>→</td><td>14:29</td><td>→</td><td>14:34</td><td>→</td><td>14:35</td>
+<tr><td>15:10</td><td>→</td><td>15:29</td><td>→</td><td>15:34</td><td>→</td><td>15:35</td>
+<tr><td>15:45</td><td>→</td><td>16:04</td><td>→</td><td>16:09</td><td>→</td><td>16:10</td>
+</table>
+<a href="http://www.kumakou.co.jp/bus/jikoku_item_9.html">時刻表</a>
+</span>
+
+<span class="tool-tips" id="ohmon-b">バス：大門坂　紀伊勝浦行き<br>
+<table>
+<tr><th style="text-align:left" colspan="2">|← \420</th><th style="text-align: right">→|</th></tr>
+<tr><th style="text-align:left" colspan="6">|← \620 （往復券：\1,000）</th><th>→|</th> </tr>
+<tr><th>那智山</th><th>→</th><th>那智の滝</th><th>→</th><th>大門坂</th><th>→</th><th>紀伊勝浦</th></tr>
+<tr><td>07:58</td><td>→</td><td>07:59</td><td>→</td><td>08:04</td><td>→</td><td>08:23</td></tr>
+<tr><td>09:10</td><td>→</td><td>09:11</td><td>→</td><td>09:16</td><td>→</td><td>09:35</td></tr>
+<tr><td>09:40</td><td>→</td><td>09:41</td><td>→</td><td>09:46</td><td>→</td><td>10:05</td></tr>
+<tr><td>10:10</td><td>→</td><td>10:11</td><td>→</td><td>10:16</td><td>→</td><td>10:35</td></tr>
+<tr><td>11:05</td><td>→</td><td>11:06</td><td>→</td><td>11:11</td><td>→</td><td>11:30</td></tr>
+<tr><td>11:45</td><td>→</td><td>11:46</td><td>→</td><td>11:51</td><td>→</td><td>12:10</td></tr>
+<tr><td>13:00</td><td>→</td><td>13:01</td><td>→</td><td>13:06</td><td>→</td><td>13:25</td></tr>
+<tr><td>13:55</td><td>→</td><td>13:56</td><td>→</td><td>14:01</td><td>→</td><td>14:20</td></tr>
+<tr><td>14:55</td><td>→</td><td>14:56</td><td>→</td><td>15:01</td><td>→</td><td>15:20</td></tr>
+<tr><td>15:50</td><td>→</td><td>15:51</td><td>→</td><td>15:56</td><td>→</td><td>16:15</td></tr>
+<tr class="primary"><td>16:25</td><td>→</td><td>16:26</td><td>→</td><td>16:31</td><td>→</td><td>16:50</td></tr>
+<tr><td>17:10</td><td>→</td><td>17:11</td><td>→</td><td>17:16</td><td>→</td><td>17:35</td></tr>
+<tr><td>17:40</td><td>→</td><td>17:41</td><td>→</td><td>17:46</td><td>→</td><td>18:05</td></tr>
+</table>
+<a href="http://www.kumakou.co.jp/bus/jikoku_item_9.html">時刻表</a>
+</span>
+
+</div>
+
+<hr>
+<!--
+*************************************************
+**************** DAY 1 MENU *********************
+*************************************************
+ -->
+ <ul class="type_1">
+  <li>
+    <a href="http://www.katuuragyoen.co.jp/">一泊目宿泊：かつうら御苑</a>
+  </li>
+  <li>
+    <a href="https://tenki.jp/forecast/6/33/6520/30207/10days.html">新宮市の天気</a>
+  </li>
+</ul>
+<ul class="type_1">
+  <li>
+    <a href="https://www.wakayama-kanko.or.jp/worldheritage/recommendedroutes/index.html">熊野古道モデルプラン</a>
+    <ul class="type_1">
+      <li>
+        <a href="https://www.wakayama-kanko.or.jp/worldheritage/recommendedroutes/plan03.html">那智大社</a>
+      </li>
+      <li>
+        <a href="https://www.wakayama-kanko.or.jp/worldheritage/recommendedroutes/plan02.html">本宮大社</a>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <a href="http://kumanohayatama.jp/">速玉大社</a>
+    <ul class="type_1">
+      <li class="disable">
+        <a href="https://www.shinguu.jp/files/pdf/ShinguSanshamodeWalkingMap_jp.pdf">新宮市お散歩マップ</a>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <a href="https://www.wakayama-kanko.or.jp/marutabi/kikinotabi/map/s-kamikura.html">神倉神社</a>
+    <ul class="type_1">
+      <li>
+	    <a href="https://nihonshinwa.com/archives/6046">神倉神社、レポート</a>
+	  </li>
+    </ul>
+  </li>
+</ul>
+<ul class="type_2">
+  <li>
+    <a href="http://www.kumakou.co.jp/">熊野交通株式会社</a>
+  </li>
+  <li>
+    <a href="http://www.hongu.jp/access/douro-bus/">道路状況・バス時刻表…熊野観光協会</a>
+  </li>
+</ul>
+<ul class="type_2">
+  <li class="disable">
+    <a href="http://www2.tb-kumano.jp/en/transport/pdf/Tanabe-Hongu-Hosshinmon-oji-bus.pdf">バス：熊野本宮⇔発心門王子</a>
+  </li>
+  <li class="disable">
+    <a href="http://www2.tb-kumano.jp/en/transport/pdf/Shingu-to-Hongu-Totsukawa-Gojo-bus.pdf">バス：新宮駅→熊野本宮</a>
+  </li>
+  <li class="disable">
+    <a href="http://www2.tb-kumano.jp/en/transport/pdf/Gojo-Totsukawa-Hongu-to-Shingu-bus.pdf">バス：熊野本宮→新宮駅</a>
+  </li>
+  <li>
+    <a href="http://www.kumakou.co.jp/bus/jikoku_item_9.html">バス：紀伊勝浦駅⇔那智大社</a>
+  </li>
+</ul>
+<ul class="type_2">
+  <li>
+    <a href="http://www.ekikara.jp/newdata/line/2701081/up1_1.htm">電車：紀伊勝浦→新宮方面</a>
+  </li>
+  <li>
+    <a href="http://www.ekikara.jp/newdata/line/2701081/down1_3.htm">電車：新宮→紀伊勝浦方面</a>
+  </li>
+</ul>
+
+<hr>
+<!--
+*************************************************
+********************* DAY 2 *********************
+*************************************************
+ -->
+
+<h1>2日目（12/27）</h1>
+
+<table class="small-text">
+
+<colgroup>
+  <col span="1" style="width:45; background-color:#f3f6f7">
+  <col span="1" style="width:80">
+  <col span="1" style="width:90">
+  <col span="1" style="width:80">
+  <col span="1" style="width:190">
+</colgroup>
+
+<thead>
+<tr> <th>乗換</th><th>出発</th><th></th><th>到着</th><th>備考</th> </tr>
+</thead>
+<tbody>
+<tr class="odd-line"> <td></td><td class="c">紀伊勝浦</td><td class="c">―→</td><td class="c">新宮</td><td>紀勢本線 普通</td> </tr>
+<tr> <td class="odd-line" rowspan="2">33分</td><td class="c">7:43</td><td class="c">24分</td><td class="c">8:07</td><td>￥240</td> </tr>
+
+<tr class="odd-line"> <td class="c">新宮駅</td><td class="c">―→</td><td class="c">本宮大社前</td><td>熊野交通バス 本宮大社行き</td> </tr>
+<tr> <td></td><td class="c">8:40</td><td class="c">1時間01分</td><td class="c">9:41</td><td>￥1,540</td> </tr>
+
+<tr class="stay-point"> <td colspan="5">本宮大社拝観　滞在：1時間34分</td> </tr>
+
+<tr class="odd-line"> <td></td><td class="c">本宮大社前</td><td class="c">―→</td><td class="c">新宮駅</td><td>熊野交通バス 勝浦駅行き</td> </tr>
+<tr> <td class="odd-line" rowspan="2">28分</td><td class="c">11:50</td><td class="c">1時間01分</td><td class="c">12:16</td><td>￥1,540</td> </tr>
+
+<tr class="odd-line"> <td class="c">新宮</td><td class="c">―→</td><td class="c">多気</td><td>ワイドビュー南紀6号</td> </tr>
+<tr> <td class="odd-line" rowspan="2">12分</td><td class="c">12:44</td><td class="c">2時間03分</td><td class="c">14:47</td><td>自由席特急券 ￥1,830<br>指定席特急券 ￥2,550</td> </tr>
+
+<tr class="odd-line"> <td class="c">多気</td><td class="c">―→</td><td class="c">伊勢市</td><td>快速みえ11号</td> </tr>
+<tr> <td></td><td class="c">14:59</td><td class="c">12分</td><td class="c">15:11</td><td>新宮から￥4,420(自由)<br>新宮から￥5,140(指定) </td> </tr>
+
+<tr class="stay-point"> <td colspan="5">チェックイン　伊勢神泉</td> </tr>
+
+<tr class="stay-point"> <td colspan="5">伊勢神宮　外宮　および付近の散策</td> </tr>
+
+</tbody>
+</table>
+
+
+<hr>
+<!--
+*************************************************
+**************** DAY 2 MENU *********************
+*************************************************
+ -->
+<ul class="type_1">
+  <li>
+    <a href="http://www.iseshinsen.jp/">二泊目宿泊：伊勢神泉</a>
+  </li>
+  <li>
+    <a href="https://tenki.jp/forecast/6/33/6520/30207/10days.html">新宮市の天気</a>
+  </li>
+  <li>
+    <a href="https://tenki.jp/forecast/5/27/5320/24203/10days.html">伊勢市の天気</a>
+  </li>
+</ul>
+<ul class="type_2">
+  <li>
+    <a href="http://www.ekikara.jp/newdata/line/2301051/up1_2.htm">電車：新宮→多気方面</a>
+  </li>
+  <li>
+    <a href="http://www.ekikara.jp/newdata/line/2301081/down1_2.htm">電車：多気→伊勢市方面</a>
+  </li>
+  <li>
+    <a href="http://www.ekikara.jp/newdata/line/2301081/up1_1.htm">電車：二見浦→伊勢市方面</a>
+  </li>
+</ul>
+
+<hr>
+<!--
+*************************************************
+********************* DAY 3 *********************
+*************************************************
+ -->
+
+<h1>3日目（12/28）</h1>
+
+<table class="small-text">
+
+<colgroup>
+  <col span="1" style="width:45; background-color:#f3f6f7">
+  <col span="1" style="width:90">
+  <col span="1" style="width:70">
+  <col span="1" style="width:90">
+  <col span="1" style="width:190">
+</colgroup>
+
+<thead>
+<tr> <th>乗換</th><th>出発</th><th></th><th>到着</th><th>備考</th> </tr>
+</thead>
+<tbody>
+<tr class="stay-point"> <td colspan="5">6:00 ～ 7:00　早朝の散歩　滞在：1時間</td> </tr>
+
+<tr class="odd-line"> <td rowspan="2"></td><td class="c">伊勢市駅前</td><td class="c">―→</td><td class="c">内宮前</td><td>三重交通バス</td> </tr>
+<tr> <td class="c">8:04</td><td class="c">18m</td><td class="c">8:22</td><td>￥430</td> </tr>
+
+<tr class="stay-point"> <td colspan="5">8:30 ～ 12:30　内宮拝観　おかげ横丁の散策　滞在：4時間</td> </tr>
+
+<tr class="odd-line"> <td></td><td class="c">内宮前</td><td class="c">―→</td><td class="c">夫婦岩東口</td><td>三重交通バス 鳥羽水族館・ミキモト真珠島</td> </tr>
+<tr> <td></td><td class="c">12:51</td><td class="c">26m</td><td class="c">13:17</td><td>￥690</td> </tr>
+
+<tr class="stay-point"> <td colspan="5">13:20 ～ 14:40 二見輿玉神社　夫婦岩　滞在：1時間20分</td> </tr>
+
+<tr class="odd-line"> <td></td><td class="c">二見輿玉神社</td><td class="c">―→</td><td class="c">二見浦</td><td>徒歩</td> </tr>
+<tr> <td rowspan="2"></td><td class="c">14:40</td><td class="c">25m</td><td class="c">15:05</td><td>￥0 (バスだと\180)</td> </tr>
+
+<tr class="odd-line"> <td class="c">二見浦</td><td class="c">―→</td><td class="c">名古屋</td><td>快速みえ18号</td> </tr>
+<tr> <td class="odd-line" rowspan="2">15分</td><td class="c">15:06</td><td class="c">2h 01m</td><td class="c">17:07</td><td>1号車 5-A/B</td> </tr>
+
+<tr class="odd-line"> <td class="c">名古屋</td><td class="c">―→</td><td class="c">新横浜</td><td>のぞみ176号</td> </tr>
+<tr> <td></td><td class="c">17:22</td><td class="c">1h 22m</td><td class="c">18:44</td><td>5号車 7-D/E</td> </tr>
+
+</tbody>
+</table>
+
+<hr>
+<p style="padding: 30px 0px">伊勢地域マップ<br><img src="images/day-2-3.gif" alt="２～３日目マップ" usemap="#point2"/></p>
+<map name="point2">
+  <area shape="circle" coords="215,75,30" alt="名古屋上り" onclick="disp_tips('nagoya-u')">
+  <area shape="circle" coords="130,500,30" alt="新宮上り" onclick="disp_tips('shingu-u2')">
+  <area shape="circle" coords="375,309,30" alt="二見浦上り" onclick="disp_tips('futamiura-u')">
+  <area shape="circle" coords="316,281,30" alt="伊勢市下り" onclick="disp_tips('iseshi-d')">
+  <area shape="circle" coords="191,308,30" alt="伊勢市下り" onclick="disp_tips('iseshi-u')">
+  <area shape="circle" coords="266,430,50" alt="外宮前" onclick="disp_tips('geku-mae')">
+  <area shape="circle" coords="350,400,30" alt="内宮前" onclick="disp_tips('naiku-mae')">
+  <area shape="circle" coords="412,253,30" alt="二見浦表参道" onclick="disp_tips('futami-ura-sando')">
+  <area shape="circle" coords="408,210,30" alt="夫婦岩" onclick="disp_tips('meoto-iwa')">
+  <area shape="default" alt="選択解除" onclick="disp_tips('default')">
+</map>
+
+<!--
+*************************************************
+*************** DAY 3 Pop Up ********************
+*************************************************
+ -->
+<div class="disp_box">
+<span class="tool-tips" id="nagoya-u">名古屋　上り<br> 17:22 のぞみ176号 </span>
+
+<span class="tool-tips" id="futamiura-u">二見浦 参宮線 上り<br>
+12:10(5m) 12:54(9m) 13:15(5m) 13:34(5m) 14:13(5m) 14:39(9m) 15:06(みえ18)<br>
+<a href="http://www.ekikara.jp/newdata/line/2301081/up1_1.htm">時刻表</a>
+</span>
+
+<span class="tool-tips" id="iseshi-d">伊勢市 参宮線 下り<br>
+12:26(7m) 12:45(9m) 13:08(7m) 13:43(9m) 14:06(7m)
+</span>
+
+<span class="tool-tips" id="iseshi-u">伊勢市 参宮線 上り<br> 15:25（みえ１８） </span>
+
+<span class="tool-tips" id="naiku-mae">内宮前　￥690<br>
+<table>
+<tr> <td width=60>内宮前</td><td></td><td width=80>夫婦岩東口</td> </tr>
+<tr> <td>9:30</td><td>→</td><td>9:56</td> </tr>
+<tr> <td>9:48</td><td>→</td><td>10:14</td> </tr>
+<tr> <td>10:51</td><td>→</td><td>11:17</td> </tr>
+<tr> <td>11:51</td><td>→</td><td>12:17</td> </tr>
+<tr> <td>12:20</td><td>→</td><td>12:46</td> </tr>
+<tr> <td>12:51</td><td>→</td><td>13:17</td> </tr>
+<tr> <td>13:51</td><td>→</td><td>14:17</td> </tr>
+<tr> <td>14:20</td><td>→</td><td>14:46</td> </tr>
+</table>
+<a href="http://www.sanco.co.jp/krs/sp/dep_arr_time_table.php?dep=7351&arr=7366&hour=5&minute=0&IsDep=1&PageIdx=0&gen=20171207&week=1">時刻表</a>
+</span>
+
+<span class="tool-tips" id="futami-ura-sando">二見浦表参道　￥180<br>
+<table>
+<tr> <td width=100>二見浦表参道</td><td></td><td width=80>夫婦岩東口</td> </tr>
+<tr> <td>10:10</td><td>→</td><td>10:14</td> </tr>
+<tr> <td>10:15</td><td>→</td><td>10:19</td> </tr>
+<tr> <td>10:22</td><td>→</td><td>10:26</td> </tr>
+<tr> <td>11:13</td><td>→</td><td>11:17</td> </tr>
+<tr> <td>12:13</td><td>→</td><td>12:17</td> </tr>
+<tr> <td>12:42</td><td>→</td><td>12:46</td> </tr>
+<tr> <td>13:13</td><td>→</td><td>13:17</td> </tr>
+<tr> <td>14:00</td><td>→</td><td>14:04</td> </tr>
+<tr> <td>14:13</td><td>→</td><td>14:17</td> </tr>
+</table>
+<a href="http://www.sanco.co.jp/krs/sp/dep_arr_time_table.php?dep=7040&arr=7366&hour=5&minute=0&IsDep=1&PageIdx=0&gen=20171207&week=1">時刻表</a>
+</span>
+
+<span class="tool-tips" id="meoto-iwa">夫婦岩　￥180<br>
+<table>
+<tr> <td width=80>夫婦岩東口</td><td></td><td width=100>二見浦表参道</td> </tr>
+<tr> <td>12:12</td><td>→</td><td>12:16</td> </tr>
+<tr> <td>13:07</td><td>→</td><td>13:11</td> </tr>
+<tr> <td>13:37</td><td>→</td><td>13:41</td> </tr>
+<tr> <td>14:07</td><td>→</td><td>14:11</td> </tr>
+<tr> <td>14:20</td><td>→</td><td>14:24</td> </tr>
+<tr> <td>15:07</td><td>→</td><td>15:11</td> </tr>
+</table>
+<a href="http://www.sanco.co.jp/krs/sp/dep_arr_time_table.php?gen=20171207&week=1&hour=12&minute=0&IsDep=1&dep=7366&arr=7040">時刻表</a>
+</span>
+
+<span class="tool-tips" id="geku-mae">外宮前<br>
+10分間隔 \220(17m)<br>
+<a href="http://www.sanco.co.jp/krs/sp/dep_arr_time_table.php?dep=7024&arr=7351&hour=5&minute=0&IsDep=1&PageIdx=0&gen=20171207&week=1">時刻表</a>
+</span>
+
+<span class="tool-tips" id="shingu-u2">新宮 紀勢線 上り<br>
+<table>
+<tr> <th>紀伊勝浦</th><th width=60>新宮</th><th width=120>多気</th><th width=60>伊勢市</th><th width=70>料金</th><th>始発</th> </tr>
+<tr class="bad"> <td>07:18</td><td>07:47</td> <td>11:07-11:33</td> <td>11:53</td> <td>\5,460</td><td>紀伊勝浦</td> </tr>
+<tr> <td>08:55</td><td>09:13</td> <td>11:16-11:33</td> <td>11:53</td> <td>\5,460</td><td>紀伊勝浦</td> </tr>
+<tr> <td>10:07</td><td>10:52</td> <td>14:10-14:35</td> <td>14:56</td> <td>\2,590</td><td>新宮</td> </tr>
+<tr class="primary"> <td>12:24</td><td>12:44</td> <td>14:47-14:59</td> <td>15:11</td> <td>\5,460</td><td>紀伊勝浦</td> </tr>
+<tr> <td></td><td>13:22</td> <td>17:28-17:40</td> <td>18:03</td> <td>\2,590</td><td>新宮</td> </tr>
+<tr> <td></td><td>13:22</td> <td>(バス＆近鉄）</td> <td>17:30</td> <td>\3,500</td><td>新宮</td> </tr>
+<tr> <td></td><td>15:30</td> <td>18:37-18:42</td> <td>19:04</td> <td>\2,590</td><td>新宮</td> </tr>
+<tr class="bad"> <td></td><td>16:13</td> <td>19:20-19:48</td> <td>20:11</td> <td>\2,590</td><td>新宮</td> </tr>
+<tr> <td></td><td>17:30</td> <td>(松坂から近鉄)</td> <td>19:55</td> <td>\5,850</td><td>紀伊勝浦</td> </tr>
+<tr> <td></td><td>17:30</td> <td>19:30-19:48</td> <td>20:11</td> <td>\2,590</td><td>紀伊勝浦</td> </tr>
+</table>
+<a href="http://www.ekikara.jp/newdata/line/2301051/up1_2.htm">時刻表</a>
+</span>
+
+</div>
+
+<hr>
+<!--
+*************************************************
+**************** DAY 3 MENU *********************
+*************************************************
+ -->
+<ul class="type_1">
+  <li>
+    <a href="https://tenki.jp/forecast/5/27/5320/24203/10days.html">伊勢市の天気</a>
+  </li>
+</ul>
+
+<ul class="type_2">
+  <li>
+    <a href="http://www.sanco.co.jp/krs/sp/dep_arr_time_table.php?dep=7351&arr=7366&hour=5&minute=0&IsDep=1&PageIdx=0&gen=20171207&week=1">バス：内宮前→二見興玉神社方面</a>
+  </li>
+  <li>
+    <a href="http://www.sanco.co.jp/krs/sp/dep_arr_time_table.php?dep=7040&arr=7366&hour=5&minute=0&IsDep=1&PageIdx=0&gen=20171207&week=1">バス：二見浦表参道→夫婦岩東口</a>
+  </li>
+  <li>
+    <a href="http://www.sanco.co.jp/krs/sp/dep_arr_time_table.php?gen=20171207&week=1&hour=12&minute=0&IsDep=1&dep=7366&arr=7040">バス：夫婦岩東口→二見浦表参道</a>
+  </li>
+  <li>
+    <a href="http://www.sanco.co.jp/krs/sp/dep_arr_time_table.php?dep=7024&arr=7351&hour=5&minute=0&IsDep=1&PageIdx=0&gen=20171207&week=1">バス：外宮前→内宮方面</a>
+  </li>
+  <li>
+    <a href="images/ise_bus_route.jpeg">三重交通バス路線図</a>
+  </li>
+</ul>
+
+</body>
+</html>

@@ -95,6 +95,8 @@ function getHoliday_info($time) {
 	}
     }
 
+    $holiday_rec = fgetcsv($r_hndl);	// 先頭のタイトル行を読み飛ばし
+
     while (1) {
 	if (($holiday_rec = fgetcsv($r_hndl)) == FALSE) break;
 
