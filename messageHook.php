@@ -73,10 +73,16 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 	$context_u['user_id'] = $current_user;
 	$context_u['timestamp'] = $event->getTimestamp();
 
-	if (($event->getType() != 'message') || ($event->getMessageType() != 'text')) {
+	if ($event->getType() != 'message') {
 	    $replyMessage = "なに、それ？ ". $event->getType()." : ".$event->getMessageType();
 	}
-	else {
+
+	if ($event->getMessageType() == 'location')) {
+	    $loc_latitude = $event->getLatitude();
+	    $loc_longitude = $event->getLongitude();
+	    $replyMessage = locationProseccor($loc_latitude, $loc_longitude, $context_s, $context_u);
+	}
+	else if ($event->getMessageType() == 'text')) {
 
 	    $receivedMessage = $event->getText();
 
@@ -84,14 +90,22 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 		$replyMessage = "なに？";
 	    }
 	}
+	else {
+	    $replyMessage = "なに、それ？ ". $event->getType()." : ".$event->getMessageType();
+	}
 
 	file_put_contents($gs_context_u, serialize($context_u));
 
-	$SendMessage = new MultiMessageBuilder();
-	$TextMessageBuilder = new TextMessageBuilder($replyMessage);
-	$SendMessage->add($TextMessageBuilder);
-	$Bot->replyMessage($event->getReplyToken(), $SendMessage);
-
+	if (is_string($replyMessage)) {
+	    $SendMessage = new MultiMessageBuilder();
+	    $TextMessageBuilder = new TextMessageBuilder($replyMessage);
+	    $SendMessage->add($TextMessageBuilder);
+	    $Bot->replyMessage($event->getReplyToken(), $SendMessage);
+	}
+	else if (is_object($replyMessage) ) {
+	    $SendMessage = new MultiMessageBuilder();
+	    $ButtonMessageBuilder = new ButtonMessageBuilder($replyMessage);
+	}
     }
 
     file_put_contents($gs_context_s, serialize($context_s));
@@ -119,6 +133,42 @@ else {
     file_put_contents($gs_context_u, serialize($context_u));
 }
 
+
+function locationProcessor($loc_latitude, $loc_longitude, &$context_s, &$context_u) {
+    //
+    //
+    //
+    $app_id = "dj00aiZpPWZITUY0Uk1TZWtqZSZzPWNvbnN1bWVyc2VjcmV0Jng9NjA-";
+    $app_url = "https://map.yahooapis.jp/alt/V1/getAltitude";		// Altitude API
+
+    $app_params = array ( "coordinates" => $loc_latitude . ',' . $loc_longitude,
+			"output" => "json");
+
+    $ch = curl_init($app_url . '?' . http_build_query($app_params));
+
+    curl_setopt_array($ch, array(
+	        CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_USERAGENT      => "Yahoo AppID: $app_id"));
+    $result = json_decode(curl_exec($ch));
+    curl_close($ch);
+
+    var_dump($result);
+    $replyMessage = "ここの標高は" . $result['Feature']['Property']['Altitude'] . "m". PHP_EOL . "ここで何か探してるの？" . PHP_EOL;
+
+    unset($context_u['qc']);
+    $context_u['qc']['あ'] = "寺";
+    $context_u['qc']['か'] = "神社";
+    $context_u['qc']['さ'] = "駅";
+    $context_u['qc']['た'] = "コンビニ";
+    $context_u['qc']['な'] = "ラーメン";
+    $context_u['qc']['は'] = "これ以外";
+
+    foreach ($context_u['qc'] as $key=>$name) {
+	$replyMessage .= $key . " : " . $name . PHP_EOL;
+    }
+
+    return ($replyMessage);
+}
 
 function messageDispatcher($receivedMessage, &$context_s, &$context_u) {
 
