@@ -14,6 +14,7 @@ DEFINE("SECRET_TOKEN","f0f343f5498fdfd0edc1cb9846723fd0");
 require_once(__DIR__."/vendor/autoload.php");
 require_once(__DIR__."/reportSensData.php");
 require_once(__DIR__."/stationQuery.php");
+require_once(__DIR__."/locationProcessor.php");
 
 require_once("google/appengine/api/cloud_storage/CloudStorageTools.php");
 use google\appengine\api\cloud_storage\CloudStorageTools;
@@ -77,12 +78,13 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 	    $replyMessage = "なに、それ？ ". $event->getType()." : ".$event->getMessageType();
 	}
 
-	if ($event->getMessageType() == 'location')) {
+	if ($event->getMessageType() == 'location') {
 	    $loc_latitude = $event->getLatitude();
 	    $loc_longitude = $event->getLongitude();
-	    $replyMessage = locationProseccor($loc_latitude, $loc_longitude, $context_s, $context_u);
+	    syslog(LOG_INFO, "LAT:".$loc_latitude."  LON:".$loc_longitude);
+	    $replyMessage = locationProcessor($loc_longitude, $loc_latitude, $context_s, $context_u);
 	}
-	else if ($event->getMessageType() == 'text')) {
+	else if ($event->getMessageType() == 'text') {
 
 	    $receivedMessage = $event->getText();
 
@@ -123,8 +125,13 @@ else {
     $context_u['user_id'] = 'uid_xxx';
     $context_u['timestamp'] = 1111;
 
-    if (($replyMessage = messageDispatcher($_POST['queryMessage'], $context_s, $context_u)) == null) {
-	echo "なに？";
+    if (array_key_exists('latitude', $_POST)) {
+    	$replyMessage = locationProcessor($_POST['longitude'], $_POST['latitude'], $context_s, $context_u);
+    }
+    else {
+	if (($replyMessage = messageDispatcher($_POST['queryMessage'], $context_s, $context_u)) == null) {
+	    echo "なに？";
+	}
     }
 
     echo $replyMessage;
@@ -134,45 +141,10 @@ else {
 }
 
 
-function locationProcessor($loc_latitude, $loc_longitude, &$context_s, &$context_u) {
-    //
-    //
-    //
-    $app_id = "dj00aiZpPWZITUY0Uk1TZWtqZSZzPWNvbnN1bWVyc2VjcmV0Jng9NjA-";
-    $app_url = "https://map.yahooapis.jp/alt/V1/getAltitude";		// Altitude API
-
-    $app_params = array ( "coordinates" => $loc_latitude . ',' . $loc_longitude,
-			"output" => "json");
-
-    $ch = curl_init($app_url . '?' . http_build_query($app_params));
-
-    curl_setopt_array($ch, array(
-	        CURLOPT_RETURNTRANSFER => true,
-		CURLOPT_USERAGENT      => "Yahoo AppID: $app_id"));
-    $result = json_decode(curl_exec($ch));
-    curl_close($ch);
-
-    var_dump($result);
-    $replyMessage = "ここの標高は" . $result['Feature']['Property']['Altitude'] . "m". PHP_EOL . "ここで何か探してるの？" . PHP_EOL;
-
-    unset($context_u['qc']);
-    $context_u['qc']['あ'] = "寺";
-    $context_u['qc']['か'] = "神社";
-    $context_u['qc']['さ'] = "駅";
-    $context_u['qc']['た'] = "コンビニ";
-    $context_u['qc']['な'] = "ラーメン";
-    $context_u['qc']['は'] = "これ以外";
-
-    foreach ($context_u['qc'] as $key=>$name) {
-	$replyMessage .= $key . " : " . $name . PHP_EOL;
-    }
-
-    return ($replyMessage);
-}
 
 function messageDispatcher($receivedMessage, &$context_s, &$context_u) {
 
-    global $respondTrainQuery, $reportSensData;
+    global $respondTrainQuery, $reportSensData, $locationSearch;
 
     //
     //  Messages Entries to whitch each application respond to
@@ -185,6 +157,10 @@ function messageDispatcher($receivedMessage, &$context_s, &$context_u) {
 	'sensorRec'  => array(
 		'func' => $reportSensData, 
 		'keyword' => array ("/^気温/")
+		),
+	'loc_processor' => array(
+		'func' => $locationSearch,
+		'keyword' => array ()
 		)
 	);
 

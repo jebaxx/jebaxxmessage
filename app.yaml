@@ -43,7 +43,11 @@ handlers:
   upload: travel_plan.html
   application_readable: true
 
-#/*.php
+- url: /test-site.html
+  static_files: test-site.html
+  upload: test-site.html
+  application_readable: true
+
 - url: /([^/]+\.php)$
   script: \1
 
