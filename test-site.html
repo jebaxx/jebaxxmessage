@@ -69,7 +69,11 @@ span.note {
 <h3>テスト用：ロケーションメッセージ送信</h3>
 <form name = "location_messagetest" action="messageHook.php" method="post">
 北緯：<input size = 60 type='text' name='latitude' value='35.61506'><br>
-東経：<input size = 60 type='text' name='longitude' value='139.37059'><br>
+東経：<input size = 60 type='text' name='longitude' value='139.37059'>
+<input type='submit' name='action' value='送信'>
+</form>
+<hr>
+<form name = "text_messagetest" action="messageHook.php" method="post">
 送信メッセージ：
 <input size = 60 type='text' name='queryMessage'>
 <input type='submit' name='action' value='送信'>

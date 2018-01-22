@@ -22,9 +22,9 @@ function locationProcessor($loc_longitude, $loc_latitude, &$context_s, &$context
     curl_close($ch);
 
 //    var_dump($result);
-    $replyMessage = "この場所の標高は" . $result['Feature'][0]['Property']['Altitude'] . "m". PHP_EOL . "ここで何か探してるの？" . PHP_EOL;
 
     unset($context_u['lp']);
+    $context_u['lp']['altitude']  = $result['Feature'][0]['Property']['Altitude'];
     $context_u['lp']['latitude']  = $loc_latitude;
     $context_u['lp']['longitude'] = $loc_longitude;
 
@@ -35,6 +35,8 @@ function locationProcessor($loc_longitude, $loc_latitude, &$context_s, &$context
     $context_u['lp']['qc']['な'] = "ラーメン";
     $context_u['lp']['qc']['は'] = "これ以外";
 
+    $replyMessage = "この場所の標高は" . $context_u['lp']['altitude'] . "m". PHP_EOL . "ここで何か探してるの？" . PHP_EOL;
+
     foreach ($context_u['qc'] as $key=>$name) {
 	$replyMessage .= $key . " : " . $name . PHP_EOL;
     }
@@ -44,18 +46,20 @@ function locationProcessor($loc_longitude, $loc_latitude, &$context_s, &$context
 
 $locationSearch = function($receivedMessage, $i, $matched, &$context_s, &$context_u) {
 
+
+    if (!array_key_exists('qc', $context_u['lp']) || !array_key_exists($receivedMessage, $context_u['lp']['qc']))
+	return null;
+
     $context_u['current_apl'] = "loc_processor";
 
-    if (array_key_exists($receivedMessage, $context_u['lp']['qc'])) {
+    if (!array_key_exists($receivedMessage, $context_u['lp']['qc'])) {
+	return null;
+    }
 
-	if (!array_key_exists($receivedMessage, $context_u['lp']['qc'][$receivedMessage])) {
-	    return null;
-	}
+    $app_id = "dj00aiZpPWZITUY0Uk1TZWtqZSZzPWNvbnN1bWVyc2VjcmV0Jng9NjA-";
+    $app_url = "https://map.yahooapis.jp/search/local/V1/localSearch";
 
-	$app_id = "dj00aiZpPWZITUY0Uk1TZWtqZSZzPWNvbnN1bWVyc2VjcmV0Jng9NjA-";
-	$app_url = "https://map.yahooapis.jp/search/local/V1/localSearch";
-
-	$app_param = $app_url . "?" . http_build_query(
+    $app_param = $app_url . "?" . http_build_query(
 				array ( "query" => $context_u['lp']['qc'][$receivedMessage],
 					"lat" => $context_u['lp']['latitude'],
 		    			"lon" => $context_u['lp']['longitude'],
@@ -63,45 +67,70 @@ $locationSearch = function($receivedMessage, $i, $matched, &$context_s, &$contex
 					"sort" => "geo",
 					"output" => "json"));
 
-	echo $app_param . "<br>". PHP_EOL;
+    echo $app_param . "<br>". PHP_EOL;
 
-	$ch = curl_init($app_param);
+    $ch = curl_init($app_param);
 
-	curl_setopt_array($ch, array(
+    curl_setopt_array($ch, array(
 	        CURLOPT_RETURNTRANSFER => true,
 		CURLOPT_USERAGENT      => "Yahoo AppID: $app_id"));
-	$result = curl_exec($ch);
-	curl_close($ch);
+    $result = curl_exec($ch);
+    curl_close($ch);
 
-	$result = json_decode($result, true);
+    $result = json_decode($result, true);
 
-	var_dump($result);
-//	echo "<br>".PHP_EOL;
+    var_dump($result);
+    echo "<br>".PHP_EOL;
 
-	unset($context_u['lp']['qc']);
-	unset($context_u['lp']['lc']);
-	$keys = array('あ', 'か', 'さ', 'た', 'な', 'は', 'ま', 'や', 'ら', 'わ');
-
-	for ($i = 0; $i < 10; $i++) {
-	    if (!array_key_exists($result['Feature'][$i])) break;
-
-	    $context_u['lp']['lc'][$keys[$i]]['name']  = $result['Feature'][$i]['Name'];
-
-	    $coordinates = str_getcsv($result['Feature'][$i]['Geometry']['Coordinates']);
-	    $context_u['lp']['lc'][$keys[$i]]['longitude'] = coordinates[0];
-	    $context_u['lp']['lc'][$keys[$i]]['latitude']  = $coordinates[1];
-	    $context_u['lp']['lc'][$keys[$i]]['address'] = $result['Feature'][$i]['Property']['Address'];
-
-	}
-
-	    
-
-	$context_u['lp']['lc']['あ']['name']  = $result['Feature'][0]['Name'];
-	$context_u['lp']['lc']['あ']['latitude']  = $result['Feature'][0]['Geometry']['Coordinates'];
-	$context_u['lp']['lc']['あ']['longitude'] = 
-	$context_u['lp']['lc']['あ']['address'] = $result['Feature'][0]['Property']['Address'];
-
+    if ($result['ResultInfo']['Count'] == 0) {
+	return ("この辺にはない");
     }
+
+    unset($context_u['lp']['qc']);
+    unset($context_u['lp']['lc']);
+    $keys = array('あ', 'か', 'さ', 'た', 'な', 'は', 'ま', 'や', 'ら', 'わ');
+
+    for ($i = 0; $i < 10; $i++) {
+	if (!array_key_exists($i, $result['Feature'])) break;
+
+	$loc_item = array();
+	$loc_item['name']    = $result['Feature'][$i]['Name'];
+	$loc_item['address'] = $result['Feature'][$i]['Property']['Address'];
+
+	$coordinates = str_getcsv($result['Feature'][$i]['Geometry']['Coordinates']);
+	$loc_item['longitude'] = $coordinates[0];
+	$loc_item['latitude']  = $coordinates[1];
+
+	$context_u['lp']['lc'][$keys[$i]] = $loc_item;
+
+	$replyMessage .= $keys[$i] . ":" . $loc_item['name'] . PHP_EOL;
+	$replyMessage .= "   " . $loc_item['address'] . PHP_EOL;
+
+	$dist = measureDistance($context_u['lp']['longitude'], $context_u['lp']['latitude'], $loc_item['longitude'], $loc_item['latitude']);
+
+	$replyMessage .= "   " . $dist['dir1'] . " ... " . $dist['dir'] . "に、約" . sprintf("%5.2f", $dist['dist']) . "km" . PHP_EOL;
+    }
+
+    return ($replyMessage);
+};
+
+function measureDistance($src_lon, $src_lat, $dst_lon, $dst_lat) {
+    $dy = ($dst_lat - $src_lat) * 6356.75 * 2 * M_PI / 360;
+    $dx = ($dst_lon - $src_lon) * 6378.13 * 2 * M_PI / 360 * cos(M_PI * $src_lat / 180);
+    $dist['dist'] = sqrt($dy * $dy + $dx * $dx);
+
+    if ($dist['dist'] < 0.01) {
+	$dist['dir'] = null;
+    }
+    else {
+	$dist['dir1'] = atan2($dx, $dy) * 16 / M_PI;
+	$dir = (int)(atan2($dx, $dy) * 16 / M_PI + 15);
+
+	$dir_name = array("西", "西南西", "南西", "南南西", "南", "南南東", "南東", "東南東", "東", "東北東", "北東", "北北東", "北", "北北西", "北西", "西北西", "西" );
+	$dist['dir'] = $dir_name[$dir / 2 + 1];
+    }
+
+    return($dist);
 }
 
 ?>
