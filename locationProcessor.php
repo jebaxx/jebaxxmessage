@@ -1,11 +1,6 @@
 <?php
 
-//
-// Special Application location message processor
-//
-function locationProcessor($loc_longitude, $loc_latitude, &$context_s, &$context_u) {
-
-    $context_u['current_apl'] = "loc_processor";
+function getAltitude($loc_longitude, $loc_latitude) {
 
     $app_id = "dj00aiZpPWZITUY0Uk1TZWtqZSZzPWNvbnN1bWVyc2VjcmV0Jng9NjA-";
     $app_url = "https://map.yahooapis.jp/alt/V1/getAltitude";		// Altitude API
@@ -21,10 +16,21 @@ function locationProcessor($loc_longitude, $loc_latitude, &$context_s, &$context
     $result = json_decode(curl_exec($ch), true);
     curl_close($ch);
 
+    return ($result['Feature'][0]['Property']['Altitude']);
+}
+
+//
+// Special Application location message processor
+//
+function locationProcessor($loc_longitude, $loc_latitude, &$context_s, &$context_u) {
+
+    $context_u['current_apl'] = "loc_processor";
+
+
 //    var_dump($result);
 
     unset($context_u['lp']);
-    $context_u['lp']['altitude']  = $result['Feature'][0]['Property']['Altitude'];
+    $context_u['lp']['altitude']  = getAltitude($loc_longitude, $loc_latitude);
     $context_u['lp']['latitude']  = $loc_latitude;
     $context_u['lp']['longitude'] = $loc_longitude;
 
@@ -40,7 +46,7 @@ function locationProcessor($loc_longitude, $loc_latitude, &$context_s, &$context
 
     $replyMessage = "この場所の標高は" . $context_u['lp']['altitude'] . "m". PHP_EOL . "ここで何か探してるの？" . PHP_EOL;
 
-    foreach ($context_u['qc'] as $key=>$value) {
+    foreach ($context_u['lp']['qc'] as $key=>$value) {
 	$replyMessage .= $key . " : " . $value['query'] . PHP_EOL;
     }
 
@@ -83,14 +89,14 @@ $locationSearch = function($receivedMessage, $i, $matched, &$context_s, &$contex
 
     $result = json_decode($result, true);
 
-    var_dump($result);
-    echo "<br>".PHP_EOL;
+//    var_dump($result);
+//    echo "<br>".PHP_EOL;
 
     if ($result['ResultInfo']['Count'] == 0) {
 	return ("この辺にはない");
     }
 
-    unset($context_u['lp']['qc']);
+    //unset($context_u['lp']['qc']);
     unset($context_u['lp']['lc']);
     $keys = array('あ', 'か', 'さ', 'た', 'な', 'は', 'ま', 'や', 'ら', 'わ');
 
@@ -108,11 +114,12 @@ $locationSearch = function($receivedMessage, $i, $matched, &$context_s, &$contex
 	$context_u['lp']['lc'][$keys[$i]] = $loc_item;
 
 	$replyMessage .= $keys[$i] . " : " . $loc_item['name'] . PHP_EOL;
-	$replyMessage .= "      " . $loc_item['address'] . PHP_EOL;
+	$replyMessage .= "      " . mb_strimwidth($loc_item['address'], 0, 23, "...", "UTF-8") . PHP_EOL;
 
 	$dist = measureDistance($context_u['lp']['longitude'], $context_u['lp']['latitude'], $loc_item['longitude'], $loc_item['latitude']);
 
-	$replyMessage .= "      " . $dist['dir1'] . " ... " . $dist['dir'] . "に" . sprintf("%5.2f", $dist['dist']) . "km" . PHP_EOL;
+//	$replyMessage .= "      " . sprintf("dr=%5.2f dx:%4.2f dy:%4.2f", $dist['dir_num'], $dist['dx'], $dist['dy']) . PHP_EOL;
+	$replyMessage .= "      " . $dist['dir_val'] . "に" . sprintf("%5.2f", $dist['dist']) . "km" . PHP_EOL;
     }
 
     return ($replyMessage);
