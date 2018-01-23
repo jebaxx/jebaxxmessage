@@ -28,17 +28,20 @@ function locationProcessor($loc_longitude, $loc_latitude, &$context_s, &$context
     $context_u['lp']['latitude']  = $loc_latitude;
     $context_u['lp']['longitude'] = $loc_longitude;
 
-    $context_u['lp']['qc']['あ'] = "寺";
-    $context_u['lp']['qc']['か'] = "神社";
-    $context_u['lp']['qc']['さ'] = "駅";
-    $context_u['lp']['qc']['た'] = "コンビニ";
-    $context_u['lp']['qc']['な'] = "ラーメン";
-    $context_u['lp']['qc']['は'] = "これ以外";
+    $context_u['lp']['qc']['あ']['query'] = "寺";
+    $context_u['lp']['qc']['あ']['gc'] = "0424001";
+    $context_u['lp']['qc']['か']['query'] = "神社";
+    $context_u['lp']['qc']['か']['gc'] = "0424002";
+    $context_u['lp']['qc']['さ']['query'] = "駅";
+    $context_u['lp']['qc']['さ']['gc'] = "0306006";
+    $context_u['lp']['qc']['た']['query'] = "コンビニ";
+    $context_u['lp']['qc']['な']['query'] = "ラーメン";
+    $context_u['lp']['qc']['わ']['query'] = "これ以外";
 
     $replyMessage = "この場所の標高は" . $context_u['lp']['altitude'] . "m". PHP_EOL . "ここで何か探してるの？" . PHP_EOL;
 
-    foreach ($context_u['qc'] as $key=>$name) {
-	$replyMessage .= $key . " : " . $name . PHP_EOL;
+    foreach ($context_u['qc'] as $key=>$value) {
+	$replyMessage .= $key . " : " . $value['query'] . PHP_EOL;
     }
 
     return ($replyMessage);
@@ -52,20 +55,21 @@ $locationSearch = function($receivedMessage, $i, $matched, &$context_s, &$contex
 
     $context_u['current_apl'] = "loc_processor";
 
-    if (!array_key_exists($receivedMessage, $context_u['lp']['qc'])) {
-	return null;
-    }
-
     $app_id = "dj00aiZpPWZITUY0Uk1TZWtqZSZzPWNvbnN1bWVyc2VjcmV0Jng9NjA-";
     $app_url = "https://map.yahooapis.jp/search/local/V1/localSearch";
 
-    $app_param = $app_url . "?" . http_build_query(
-				array ( "query" => $context_u['lp']['qc'][$receivedMessage],
-					"lat" => $context_u['lp']['latitude'],
-		    			"lon" => $context_u['lp']['longitude'],
-					"dist" => 3,
-					"sort" => "geo",
-					"output" => "json"));
+    $query_param = array( "lat" => $context_u['lp']['latitude'],
+		    	  "lon" => $context_u['lp']['longitude'],
+			  "dist" => 3,
+			  "sort" => "geo",
+			  "output" => "json");
+
+    if (array_key_exists('gc', $context_u['lp']['qc'][$receivedMessage]))
+	$query_param['gc'] = $context_u['lp']['qc'][$receivedMessage]['gc'];
+    else
+	$query_param['query'] = $context_u['lp']['qc'][$receivedMessage]['query'];
+
+    $app_param = $app_url . "?" . http_build_query($query_param);
 
     echo $app_param . "<br>". PHP_EOL;
 
@@ -103,12 +107,12 @@ $locationSearch = function($receivedMessage, $i, $matched, &$context_s, &$contex
 
 	$context_u['lp']['lc'][$keys[$i]] = $loc_item;
 
-	$replyMessage .= $keys[$i] . ":" . $loc_item['name'] . PHP_EOL;
-	$replyMessage .= "   " . $loc_item['address'] . PHP_EOL;
+	$replyMessage .= $keys[$i] . " : " . $loc_item['name'] . PHP_EOL;
+	$replyMessage .= "      " . $loc_item['address'] . PHP_EOL;
 
 	$dist = measureDistance($context_u['lp']['longitude'], $context_u['lp']['latitude'], $loc_item['longitude'], $loc_item['latitude']);
 
-	$replyMessage .= "   " . $dist['dir1'] . " ... " . $dist['dir'] . "に、約" . sprintf("%5.2f", $dist['dist']) . "km" . PHP_EOL;
+	$replyMessage .= "      " . $dist['dir1'] . " ... " . $dist['dir'] . "に" . sprintf("%5.2f", $dist['dist']) . "km" . PHP_EOL;
     }
 
     return ($replyMessage);
@@ -117,17 +121,21 @@ $locationSearch = function($receivedMessage, $i, $matched, &$context_s, &$contex
 function measureDistance($src_lon, $src_lat, $dst_lon, $dst_lat) {
     $dy = ($dst_lat - $src_lat) * 6356.75 * 2 * M_PI / 360;
     $dx = ($dst_lon - $src_lon) * 6378.13 * 2 * M_PI / 360 * cos(M_PI * $src_lat / 180);
+
+    $dist['dx']   = $dx;
+    $dist['dy']   = $dy;
     $dist['dist'] = sqrt($dy * $dy + $dx * $dx);
 
     if ($dist['dist'] < 0.01) {
-	$dist['dir'] = null;
+	$dist['dir_num'] = -1;
+	$dist['dir_val'] = null;
     }
     else {
-	$dist['dir1'] = atan2($dx, $dy) * 16 / M_PI;
-	$dir = (int)(atan2($dx, $dy) * 16 / M_PI + 15);
+	$dist['dir_num'] = atan2($dy, $dx) * 16 / M_PI + 17;
+	$dir = intval(atan2($dy, $dx) * 16 / M_PI + 17) / 2;
 
 	$dir_name = array("西", "西南西", "南西", "南南西", "南", "南南東", "南東", "東南東", "東", "東北東", "北東", "北北東", "北", "北北西", "北西", "西北西", "西" );
-	$dist['dir'] = $dir_name[$dir / 2 + 1];
+	$dist['dir_val'] = $dir_name[$dir];
     }
 
     return($dist);
