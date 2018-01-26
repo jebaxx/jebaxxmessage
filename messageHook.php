@@ -98,16 +98,20 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 
 	file_put_contents($gs_context_u, serialize($context_u));
 
+	$ReplyBuilder = new MultiMessageBuilder();
+
 	if (is_string($replyMessage)) {
-	    $SendMessage = new MultiMessageBuilder();
-	    $TextMessageBuilder = new TextMessageBuilder($replyMessage);
-	    $SendMessage->add($TextMessageBuilder);
-	    $Bot->replyMessage($event->getReplyToken(), $SendMessage);
+	    $textBuilder = new TextMessageBuilder($replyMessage);
+	    $ReplyBuilder->add($textBuilder);
 	}
-	else if (is_object($replyMessage) ) {
-	    $SendMessage = new MultiMessageBuilder();
-	    $ButtonMessageBuilder = new ButtonMessageBuilder($replyMessage);
+	else if ($replyMessage instanceof MultiMessageBuilder) {
+	    $ReplyBuilder = $replyMessage;
 	}
+	else if ($replyMessage instanceof MessageBuilder) {
+	    $ReplyBuilder->add($replyMessage);
+	}
+
+	$Bot->replyMessage($event->getReplyToken(), $ReplyBuilder);
     }
 
     file_put_contents($gs_context_s, serialize($context_s));
@@ -134,7 +138,7 @@ else {
 	}
     }
 
-    echo $replyMessage;
+    var_export($replyMessage);
 
     file_put_contents($gs_context_s, serialize($context_s));
     file_put_contents($gs_context_u, serialize($context_u));

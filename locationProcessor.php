@@ -1,26 +1,18 @@
 <?php
 
-function getAltitude($loc_longitude, $loc_latitude) {
+require_once(__DIR__."/vendor/autoload.php");
 
-    $app_id = "dj00aiZpPWZITUY0Uk1TZWtqZSZzPWNvbnN1bWVyc2VjcmV0Jng9NjA-";
-    $app_url = "https://map.yahooapis.jp/alt/V1/getAltitude";		// Altitude API
-
-    $app_params = array ( "coordinates" => $loc_longitude . ',' . $loc_latitude,
-			"output" => "json");
-
-    $ch = curl_init($app_url . '?' . http_build_query($app_params));
-
-    curl_setopt_array($ch, array(
-	        CURLOPT_RETURNTRANSFER => true,
-		CURLOPT_USERAGENT      => "Yahoo AppID: $app_id"));
-    $result = json_decode(curl_exec($ch), true);
-    curl_close($ch);
-
-    return ($result['Feature'][0]['Property']['Altitude']);
-}
+use \LINE\LINEBot;
+use \LINE\LINEBot\MessageBuilder\TextMessageBuilder;
+use \LINE\LINEBot\MessageBuilder\LocationMessageBuilder;
+use \LINE\LINEBot\MessageBuilder\MultiMessageBuilder;
 
 //
-// Special Application location message processor
+// location message responder initial message responder
+//
+//	input : location message
+//	output: Altitude
+//		Search prompt
 //
 function locationProcessor($loc_longitude, $loc_latitude, &$context_s, &$context_u) {
 
@@ -53,10 +45,16 @@ function locationProcessor($loc_longitude, $loc_latitude, &$context_s, &$context
     return ($replyMessage);
 };
 
+//
+// location search responder
+//
+//	input:	Search request character
+//	output:	Search result (text base or location message)
+//
 $locationSearch = function($receivedMessage, $i, $matched, &$context_s, &$context_u) {
 
 
-    if (!array_key_exists('qc', $context_u['lp']) || !array_key_exists($receivedMessage, $context_u['lp']['qc']))
+    if (!array_key_exists('qc', $context_u['lp']))
 	return null;
 
     $context_u['current_apl'] = "loc_processor";
@@ -70,10 +68,16 @@ $locationSearch = function($receivedMessage, $i, $matched, &$context_s, &$contex
 			  "sort" => "geo",
 			  "output" => "json");
 
-    if (array_key_exists('gc', $context_u['lp']['qc'][$receivedMessage]))
+    if (!array_key_exists($receivedMessage, $context_u['lp']['qc'])) {
+	$query_param['query'] = $target = $receivedMessage;
+    }
+    else if (array_key_exists('gc', $context_u['lp']['qc'][$receivedMessage])) {
 	$query_param['gc'] = $context_u['lp']['qc'][$receivedMessage]['gc'];
-    else
-	$query_param['query'] = $context_u['lp']['qc'][$receivedMessage]['query'];
+	$target = $context_u['lp']['qc'][$receivedMessage]['query'];
+    }
+    else {
+	$query_param['query'] = $target = $context_u['lp']['qc'][$receivedMessage]['query'];
+    }
 
     $app_param = $app_url . "?" . http_build_query($query_param);
 
@@ -87,44 +91,143 @@ $locationSearch = function($receivedMessage, $i, $matched, &$context_s, &$contex
     $result = curl_exec($ch);
     curl_close($ch);
 
-    $result = json_decode($result, true);
+    return (createResponceBuilders($target, json_decode($result, true), $context_s, $context_u));
+};
 
-//    var_dump($result);
-//    echo "<br>".PHP_EOL;
+//
+//  Construct Search result message (or builder objects)
+//
+//	input:	query result set
+//	output:	response text (or message builder objects)
+//	* this function split the rsult set fit to the respond format
+//
+function createResponceBuilders($target, $queryResult, &$context_s, &$context_u) {
 
-    if ($result['ResultInfo']['Count'] == 0) {
-	return ("この辺にはない");
+    unset($context_u['lp']['lc']);
+
+    if ($queryResult['ResultInfo']['Count'] == 0) {
+	return ("この辺には" . $target . "はない");
     }
 
-    //unset($context_u['lp']['qc']);
-    unset($context_u['lp']['lc']);
-    $keys = array('あ', 'か', 'さ', 'た', 'な', 'は', 'ま', 'や', 'ら', 'わ');
-
-    for ($i = 0; $i < 10; $i++) {
-	if (!array_key_exists($i, $result['Feature'])) break;
+    for ($i = 0; ; $i++) {
+	if (!array_key_exists($i, $queryResult['Feature'])) {
+	    $context_u['lp']['num_lc'] = $i;
+	    break;
+	}
 
 	$loc_item = array();
-	$loc_item['name']    = $result['Feature'][$i]['Name'];
-	$loc_item['address'] = $result['Feature'][$i]['Property']['Address'];
+	$loc_item['name']    = $queryResult['Feature'][$i]['Name'];
+	$loc_item['address'] = $queryResult['Feature'][$i]['Property']['Address'];
 
-	$coordinates = str_getcsv($result['Feature'][$i]['Geometry']['Coordinates']);
+	$coordinates = str_getcsv($queryResult['Feature'][$i]['Geometry']['Coordinates']);
 	$loc_item['longitude'] = $coordinates[0];
 	$loc_item['latitude']  = $coordinates[1];
 
-	$context_u['lp']['lc'][$keys[$i]] = $loc_item;
+	$context_u['lp']['lc'][$i] = $loc_item;
+    }
 
+    $context_u['lp']['ptr_lc'] = 0;
+    return(createResponceBuilders_inScope_2($context_u));
+}
+
+//
+//  Create Search result message text
+//
+//	input:	search result (in a user context)
+//	output:	message text
+//
+function createResponceBuilders_inScope_1(&$context_u) {
+
+    $keys = array('あ', 'か', 'さ', 'た', 'な', 'は', 'ま', 'や', 'ら', 'わ');
+
+    $replyMessage = "";
+
+
+    for ($i = 0; $i < 10; $i++) {
+	if (!array_key_exists($i + $context_u['lp']['ptr_lc'], $context_u['lp']['lc'])) {
+	    $replyMessage .= "もうない";
+	    break;
+	}
+
+	$loc_item = $context_u['lp']['lc'][$i + $context_u['lp']['lc']['ptr_lc']];
 	$replyMessage .= $keys[$i] . " : " . $loc_item['name'] . PHP_EOL;
 	$replyMessage .= "      " . mb_strimwidth($loc_item['address'], 0, 23, "...", "UTF-8") . PHP_EOL;
 
 	$dist = measureDistance($context_u['lp']['longitude'], $context_u['lp']['latitude'], $loc_item['longitude'], $loc_item['latitude']);
+        if ($dist['dir_val'] != null) {
+	    $replyMessage .= "      " . $dist['dir_val'] . "に" . sprintf("%5.2f", $dist['dist']) . "km";
 
-//	$replyMessage .= "      " . sprintf("dr=%5.2f dx:%4.2f dy:%4.2f", $dist['dir_num'], $dist['dx'], $dist['dy']) . PHP_EOL;
-	$replyMessage .= "      " . $dist['dir_val'] . "に" . sprintf("%5.2f", $dist['dist']) . "km" . PHP_EOL;
+	    $alt = getAltitude($loc_item['longitude'], $loc_item['latitude']);
+	    $replyMessage .= "   高低差：" . (floatval($alt) - floatval($context_u['lp']['altitude'])) . "m" . PHP_EOL;
+        }
     }
 
+    $context_u['lp']['ptr_lc'] += $i;
     return ($replyMessage);
-};
+}
 
+//
+//  Create Search result message builder objects
+//
+//	input:	search result (in a user context)
+//	output:	message builder objects
+//
+function createResponceBuilders_inScope_2(&$context_u) {
+
+    $replyBuilder = new MultiMessageBuilder();
+
+    for ($i = 0; $i < 5; $i++) {
+	if (!array_key_exists($i + $context_u['lp']['ptr_lc'], $context_u['lp']['lc'])) {
+	    $replyBuilder->add(new TextMessageBuilder("もうない"));
+	    break;
+	}
+
+	$loc_item = $context_u['lp']['lc'][$i + $context_u['lp']['lc']['ptr_lc']];
+	$address = mb_strimwidth($loc_item['address'], 0, 23, "&", "UTF-8");
+
+	$dist = measureDistance($context_u['lp']['longitude'], $context_u['lp']['latitude'], $loc_item['longitude'], $loc_item['latitude']);
+        if ($dist['dir_val'] != null) {
+	    $address .= PHP_EOL . $dist['dir_val'] . "に" . sprintf("%5.2f", $dist['dist']) . "km";
+	    $address .= "  高低差:" . (floatval(getAltitude($loc_item['longitude'], $loc_item['latitude'])) - floatval($context_u['lp']['altitude'])) . "m";
+        }
+	$replyBuilder->add(new LocationMessageBuilder($loc_item['name'], $address, $loc_item['latitude'], $loc_item['longitude']));
+    }
+
+    $context_u['lp']['ptr_lc'] += $i;
+    return ($replyBuilder);
+}
+
+//
+//  query altitude of specified place
+//
+//	input:	longitude and latitude
+//	output:	latitude
+//
+function getAltitude($loc_longitude, $loc_latitude) {
+
+    $app_id = "dj00aiZpPWZITUY0Uk1TZWtqZSZzPWNvbnN1bWVyc2VjcmV0Jng9NjA-";
+    $app_url = "https://map.yahooapis.jp/alt/V1/getAltitude";		// Altitude API
+
+    $app_params = array ( "coordinates" => $loc_longitude . ',' . $loc_latitude,
+			"output" => "json");
+
+    $ch = curl_init($app_url . '?' . http_build_query($app_params));
+
+    curl_setopt_array($ch, array(
+	        CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_USERAGENT      => "Yahoo AppID: $app_id"));
+    $result = json_decode(curl_exec($ch), true);
+    curl_close($ch);
+
+    return ($result['Feature'][0]['Property']['Altitude']);
+}
+
+//
+//  calculate distance of specified two place
+//
+//	input:	source point and destination point (of longitude and latitude)
+//	output:	distance and direction of distination point
+//
 function measureDistance($src_lon, $src_lat, $dst_lon, $dst_lat) {
     $dy = ($dst_lat - $src_lat) * 6356.75 * 2 * M_PI / 360;
     $dx = ($dst_lon - $src_lon) * 6378.13 * 2 * M_PI / 360 * cos(M_PI * $src_lat / 180);
