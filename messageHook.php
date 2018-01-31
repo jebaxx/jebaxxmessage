@@ -21,7 +21,11 @@ use google\appengine\api\cloud_storage\CloudStorageTools;
 
 use \LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use \LINE\LINEBot;
+use \LINE\LINEBot\Event\MessageEvent;;
+use \LINE\LINEBot\Event\PostbackEvent;;
+use \LINE\LINEBot\Response;
 use \LINE\LINEBot\MessageBuilder\TextMessageBuilder;
+use \LINE\LINEBot\MessageBuilder\TemplateMessageBuilder;
 use \LINE\LINEBot\MessageBuilder\MultiMessageBuilder;
 use \LINE\LINEBot\Constant\HTTPHeader;
 
@@ -43,8 +47,8 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
     syslog(LOG_INFO, $inputData);
 
     // create HTTPClient instance
-    $httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient(ACCESS_TOKEN);
-    $Bot = new \LINE\LINEBot($httpClient, ['channelSecret' => SECRET_TOKEN]);
+    $httpClient = new CurlHTTPClient(ACCESS_TOKEN);
+    $Bot = new LINEBot($httpClient, ['channelSecret' => SECRET_TOKEN]);
 
     // Check request with signature and parse request
     try {
@@ -74,11 +78,13 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 	$context_u['user_id'] = $current_user;
 	$context_u['timestamp'] = $event->getTimestamp();
 
-	if ($event->getType() != 'message') {
-	    $replyMessage = "なに、それ？ ". $event->getType()." : ".$event->getMessageType();
+	if ($event instanceof PostbackEvent) {
+	    $replyMessage = PostbackeventDispatcher($event->getPostbackData(), $context_s, $context_u);	
 	}
-
-	if ($event->getMessageType() == 'location') {
+	else if ($event->getType() != 'message') {
+	    $replyMessage = "なに、それ？ ". $event->getType();
+	}
+	else if ($event->getMessageType() == 'location') {
 	    $loc_latitude = $event->getLatitude();
 	    $loc_longitude = $event->getLongitude();
 	    syslog(LOG_INFO, "LAT:".$loc_latitude."  LON:".$loc_longitude);
@@ -98,20 +104,18 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 
 	file_put_contents($gs_context_u, serialize($context_u));
 
-	$ReplyBuilder = new MultiMessageBuilder();
-
 	if (is_string($replyMessage)) {
-	    $textBuilder = new TextMessageBuilder($replyMessage);
-	    $ReplyBuilder->add($textBuilder);
+	    $ReplyBuilder = new TextMessageBuilder($replyMessage);
 	}
-	else if ($replyMessage instanceof MultiMessageBuilder) {
+	else {
 	    $ReplyBuilder = $replyMessage;
 	}
-	else if ($replyMessage instanceof MessageBuilder) {
-	    $ReplyBuilder->add($replyMessage);
-	}
 
-	$Bot->replyMessage($event->getReplyToken(), $ReplyBuilder);
+	$LineResponse = $Bot->replyMessage($event->getReplyToken(), $ReplyBuilder);
+
+	if(!$LineResponse->isSucceeded()) {
+	    syslog(LOG_ERR, sprintf("stat: %d  response: %s" , $LineResponse->getHTTPStatus(), $LineResponse->getRawBody()));
+	}
     }
 
     file_put_contents($gs_context_s, serialize($context_s));
@@ -143,8 +147,6 @@ else {
     file_put_contents($gs_context_s, serialize($context_s));
     file_put_contents($gs_context_u, serialize($context_u));
 }
-
-
 
 function messageDispatcher($receivedMessage, &$context_s, &$context_u) {
 
@@ -189,7 +191,7 @@ function messageDispatcher($receivedMessage, &$context_s, &$context_u) {
 
 	// 一致するパターンがない場合でも、一度優先アプリに問い合わせる
 	if ($replyMessage == null) 
-	    if (($replyMessage = $aplTable['func']($receivedMessage, 999, $result, $context_s, $context_u)) != null)
+	    if (($replyMessage = $aplTable['func']($receivedMessage, 999, null, $context_s, $context_u)) != null)
 		return($replyMessage);
     }
 
@@ -217,6 +219,17 @@ function messageDispatcher($receivedMessage, &$context_s, &$context_u) {
     }
 
     return(null);
+}
+
+function PostbackeventDispatcher($postbackData, &$context_s, &$context_u) {
+
+    $postbackParams = str_getcsv($postbackData);
+
+    if ($postbackParams[0] == "map") {
+    	$replyMessage = Postback_callback($postbackParams[0], $postbackParams[1], $context_s, $context_u);
+    }
+
+    return $replyMessage;
 }
 
 ?>
