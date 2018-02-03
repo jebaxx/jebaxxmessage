@@ -11,247 +11,374 @@ use \LINE\LINEBot\MessageBuilder\TemplateBuilder\ButtonTemplateBuilder;
 use \LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder;
 use \LINE\LINEBot\TemplateActionBuilder\UriTemplateActionBuilder;
 
+use \LINE\LINEBot\MessageBuilder\ImagemapMessageBuilder;
+use \LINE\LINEBot\MessageBuilder\Imagemap\BaseSizeBuilder;
+use \LINE\LINEBot\ImagemapActionBuilder\ImagemapMessageActionBuilder;
+use \LINE\LINEBot\ImagemapActionBuilder\AreaBuilder;
+
+
 //
-// location message responder initial message responder
+//  ロケーションメッセージのエントリーポイント
 //
-//	input : location message
-//	output: Altitude
-//		Search prompt
-//
-function locationProcessor($loc_longitude, $loc_latitude, &$context_s, &$context_u) {
+function enterStartPoint($longitude, $latitude, &$context_s, &$context_u) {
 
-    $context_u['current_apl'] = "loc_processor";
-
-
-//    var_dump($result);
-
+    $context_u['current_apl']     = "loc_processor";
     unset($context_u['lp']);
-    $context_u['lp']['altitude']  = getAltitude($loc_longitude, $loc_latitude);
-    $context_u['lp']['latitude']  = $loc_latitude;
-    $context_u['lp']['longitude'] = $loc_longitude;
+    $context_u['lp']['state']     = "始点特定";
+    $context_u['lp']['altitude']  = getAltitude($longitude, $latitude);
+    $context_u['lp']['longitude'] = $longitude;
+    $context_u['lp']['latitude']  = $latitude;
 
-    $context_u['lp']['qc']['あ']['query'] = "寺";
-    $context_u['lp']['qc']['あ']['gc'] = "0424001";
-    $context_u['lp']['qc']['か']['query'] = "神社";
-    $context_u['lp']['qc']['か']['gc'] = "0424002";
-    $context_u['lp']['qc']['さ']['query'] = "駅";
-    $context_u['lp']['qc']['さ']['gc'] = "0306006";
-    $context_u['lp']['qc']['た']['query'] = "コンビニ";
-    $context_u['lp']['qc']['な']['query'] = "ラーメン";
-    $context_u['lp']['qc']['わ']['query'] = "なにも探さない";
+    return(createStartPointMessage($context_u));
+}
 
-    $replyMessage = "この場所の標高は" . $context_u['lp']['altitude'] . "m". PHP_EOL . "ここで何か探してるの？" . PHP_EOL;
-    $replyMessage .= "キーワードでも探せる…";
+function createStartPointMessage(&$context_u) {
 
+    unset($context_u['lp']['qc']);
+    $context_u['lp']['qc']['寺']['name'] = "寺";
+    $context_u['lp']['qc']['寺']['gc'] = "0424001";
+    $context_u['lp']['qc']['神社']['name'] = "神社";
+    $context_u['lp']['qc']['神社']['gc'] = "0424002";
+    $context_u['lp']['qc']['駅']['name'] = "駅";
+    $context_u['lp']['qc']['駅']['gc'] = "0306006";
+    $context_u['lp']['qc']['コンビニ']['name'] = "コンビニ";
+    $context_u['lp']['qc']['ラーメン']['name'] = "ラーメン";
+
+/*
     foreach ($context_u['lp']['qc'] as $key=>$value) {
-	$replyMessage .= $key . " : " . $value['query'] . PHP_EOL;
+	$replyMessage .= $key . " : " . $value['name'] . PHP_EOL;
     }
 
+    $replyMessage .= "これ以外…直接入力OK";
+*/
+
+    $textMessage = new TextMessageBuilder("この場所の標高は" . $context_u['lp']['altitude'] . "m". PHP_EOL . "ここで何か探してるの？");
+    $selectPanel = createSelectPanelBuilder_1();
+    $replyMessage = new MultiMessageBuilder();
+    $replyMessage->add($textMessage);
+    $replyMessage->add($selectPanel);
+
     return ($replyMessage);
+}
+
+function createSelectPanelBuilder_1() {
+
+    $baseUrl = "https://jebaxxmessage.appspot.com/images/menu01";
+    $baseSize = new BaseSizeBuilder(400, 1040);
+    $callbacks = array();
+    array_push($callbacks, new ImagemapMessageActionBuilder("寺", new AreaBuilder(0, 0, 345, 195)));
+    array_push($callbacks, new ImagemapMessageActionBuilder("神社", new AreaBuilder(348, 0, 345, 195)));
+    array_push($callbacks, new ImagemapMessageActionBuilder("駅", new AreaBuilder(693, 0, 345, 195)));
+    array_push($callbacks, new ImagemapMessageActionBuilder("コンビニ", new AreaBuilder(0, 200, 345, 195)));
+    array_push($callbacks, new ImagemapMessageActionBuilder("ラーメン", new AreaBuilder(348, 200, 345, 195)));
+    array_push($callbacks, new ImagemapMessageActionBuilder("これ以外", new AreaBuilder(693, 200, 345, 195)));
+
+    return(new ImagemapMessageBuilder($baseUrl, "コマンド選択パネル", $baseSize, $callbacks));
+}
+
+function createSelectPanelBuilder_2() {
+
+    $baseUrl = "https://jebaxxmessage.appspot.com/images/menu02";
+    $baseSize = new BaseSizeBuilder(400, 1040);
+    $callbacks = array();
+    array_push($callbacks, new ImagemapMessageActionBuilder("1", new AreaBuilder(  0,   0, 190, 195)));
+    array_push($callbacks, new ImagemapMessageActionBuilder("2", new AreaBuilder(190,   0, 190, 195)));
+    array_push($callbacks, new ImagemapMessageActionBuilder("3", new AreaBuilder(380,   0, 190, 195)));
+    array_push($callbacks, new ImagemapMessageActionBuilder("4", new AreaBuilder(570,   0, 190, 195)));
+    array_push($callbacks, new ImagemapMessageActionBuilder("5", new AreaBuilder(  0, 200, 190, 195)));
+    array_push($callbacks, new ImagemapMessageActionBuilder("6", new AreaBuilder(190, 200, 190, 195)));
+    array_push($callbacks, new ImagemapMessageActionBuilder("7", new AreaBuilder(380, 200, 190, 195)));
+    array_push($callbacks, new ImagemapMessageActionBuilder("8", new AreaBuilder(570, 200, 190, 195)));
+
+    array_push($callbacks, new ImagemapMessageActionBuilder("次",     new AreaBuilder(770,   0, 190, 260)));
+    array_push($callbacks, new ImagemapMessageActionBuilder("再検索", new AreaBuilder(770, 200, 190, 260)));
+
+    return(new ImagemapMessageBuilder($baseUrl, "コマンド選択パネル", $baseSize, $callbacks));
+}
+
+//
+//  Postbackイベントのエントリーポイント
+//
+function Postback_callback($category, $param, &$context_s, &$context_u) {
+
+    //
+    //  「場所を送信」が選択された際、Postbackメッセージをアプリに送る
+    //  アプリは場所を示すlocation messageを送り、ユーザーにタップさせる
+    //
+    if ($category != "map") {
+	syslog(LOG_ERR, "Illigal postback category.");
+	return null;
+    }
+
+    $idx = intval($param) + $context_u['lp']['ptr_lc'];
+    
+    if (!array_key_exists($idx, $context_u['lp']['lc'])) {
+	syslog(LOG_ERR, "Illegal postback parameter.");
+	return null;
+    }
+
+    $loc_item = $context_u['lp']['lc'][$idx];
+
+    $address = $loc_item['address'] . PHP_EOL;
+    if (isset($loc_item['direction'])) {
+	$address .= $loc_item['direction'] . sprintf(" %5.2f", $loc_item['distance']) . "km";
+	$address .= " Δ=" . sprintf("%+4.1f", $loc_item['delta']) . "m";
+    }
+
+    return(new LocationMessageBuilder($loc_item['name'], $address, $loc_item['latitude'], $loc_item['longitude']));
+}
+
+//
+//  textメッセージエントリーポイント
+//
+$locMessageProcessor = function($receivedMessage, $i, $matched, &$context_s, &$context_u) {
+
+    syslog(LOG_INFO, "Message = " . $receivedMessage . " : state = " . $context_u['lp']['state']);
+    echo "message = " . $receivedMessage . "<br>" . PHP_EOL;
+
+//////////////////////////////////////////////////////////////////////////////////////////
+    if ($context_u['lp']['state'] == "始点特定") {
+
+	if ($receivedMessage == 'これ以外') {
+	    $context_u['lp']['state'] = "ワード入力";
+	    return('何を探すの？');
+	}
+
+	if (!array_key_exists($receivedMessage, $context_u['lp']['qc'])) {
+	    //
+	    //  期待と違うメッセージの場合
+	    $context_u['lp']['state'] = "ニュートラル";
+	    return(null);
+	}
+
+        $context_u['lp']['state'] = "施設一覧";
+
+	//  検索実行
+	if (($resultNum = execLocationQuery($receivedMessage, $context_u)) == 0) {
+	    return("この辺には" . $context_u['lp']['target'] . "はない");
+	}
+
+	return(createQueryResultResponce($context_u));      //  結果メッセージを送信
+    }
+
+//////////////////////////////////////////////////////////////////////////////////////////
+    if ($context_u['lp']['state'] == "ワード入力") {
+
+	$context_u['lp']['state'] = "施設一覧";
+
+	//  検索実行
+	if (($resultNum = execLocationQuery($receivedMessage, $context_u)) == 0) {
+	    return("この辺には" . $context_u['lp']['target'] . "はない");
+	}
+
+        return(createQueryResultResponce($context_u));      //  結果メッセージを送信
+    }
+
+//////////////////////////////////////////////////////////////////////////////////////////
+    if ($context_u['lp']['state'] == "施設一覧") {
+        
+	if ($receivedMessage == '次' || $receivedMessage == 'つぎ') {
+	    return(createQueryResultResponce($context_u));      //  結果メッセージ（続き）を送信
+	}
+        
+	if ($receivedMessage == '再検索') {
+	    $context_u['lp']['state']     = "始点特定";
+	    return(createStartPointMessage($context_u));      //  始点特定状態に戻す
+	}
+
+	$keys = array('1', '2', '3', '4', '5', '6', '7');
+
+	if (($ofs = array_search($receivedMessage, $keys)) === FALSE) {
+	$context_u['lp']['state'] = "ニュートラル";
+	    return(null);
+	}
+
+	if (!array_key_exists($ofs + $context_u['lp']['ptr_lc'], $context_u['lp']['lc'])) {
+	    return("なんか違ってる");
+	}
+        
+	$context_u['lp']['state'] = "施設特定";
+	return(createFacilityInfoResponce($ofs, $context_u));
+    }
+    
+//////////////////////////////////////////////////////////////////////////////////////////
+    if ($context_u['lp']['state'] == "施設特定") {
+
+	if ($receivedMessage == '次' || $receivedMessage == 'つぎ') {
+	$context_u['lp']['state'] = "施設一覧";
+	    return(createQueryResultResponce($context_u));      //  結果メッセージ（続き）を送信
+	}
+        
+	if ($receivedMessage == '再検索') {
+	    $context_u['lp']['state']     = "始点特定";
+	    return(createStartPointMessage($context_u));      //  始点特定状態に戻す
+	}
+
+	$keys = array('1', '2', '3', '4', '5', '6', '7');
+
+	if (($ofs = array_search($receivedMessage, $keys)) === FALSE) {
+	$context_u['lp']['state'] = "ニュートラル";
+	    return(null);
+	}
+
+	if (!array_key_exists($ofs + $context_u['lp']['ptr_lc'], $context_u['lp']['lc'])) {
+	    return("なんか違ってる");
+	}
+
+	return(createFacilityInfoResponce($ofs, $context_u));
+    }
 };
 
 //
-// location search responder
+//  近隣施設検索を実行
+//  （結果はcontext変数に格納し、関数値としてヒット件数を返す）
 //
-//	input:	Search request character
-//	output:	Search result (text base or location message)
-//
-$locationSearch = function($receivedMessage, $i, $matched, &$context_s, &$context_u) {
+function execLocationQuery($receivedMessage, &$context_u) {
+        
+    syslog(LOG_INFO, "loc_query : ". $receivedMessage);
+    $app_id = "dj00aiZpPWZITUY0Uk1TZWtqZSZzPWNvbnN1bWVyc2VjcmV0Jng9NjA-";
+    $app_url = "https://map.yahooapis.jp/search/local/V1/localSearch";
 
-
-    if (array_key_exists('lc' , $context_u['lp'])) {
-    	//
-    	// 検索結果を返答済みの状態
-    	//
-
-	// "いきしちにひみ"に対応してbuttonResponseを生成する
-	//
-	if (preg_match("/^(い|き|し|ち|に|ひ|み)$/", $receivedMessage, $result) != FALSE) {
-	    $keys = array("い", "き", "し", "ち", "に", "ひ", "み");
-
-	    $ofs = array_search($result[1], $keys);
-	    $loc_item = $context_u['lp']['lc'][$ofs + $context_u['lp']['ptr_lc']];
-
-	    $text = mb_strimwidth($loc_item['address'], 0, 30, "...", "UTF-8") . PHP_EOL;
-
-	    $dist = measureDistance($context_u['lp']['longitude'], $context_u['lp']['latitude'], $loc_item['longitude'], $loc_item['latitude']);
-	    if ($dist['dir_val'] != null) {
-		$text .= $dist['dir_val'] . sprintf("%5.2f", $dist['dist']) . "km";
-
-		$alt = getAltitude($loc_item['longitude'], $loc_item['latitude']);
-		$text .= "  Δ=" . sprintf("%+4.1f",(floatval($alt) - floatval($context_u['lp']['altitude']))) . "m" . PHP_EOL;
-	    }
-
-	    $actions[0] = new PostbackTemplateActionBuilder("地図（ファイル）", "map," . $receivedMessage);
-	    $app_id = "dj00aiZpPWZITUY0Uk1TZWtqZSZzPWNvbnN1bWVyc2VjcmV0Jng9NjA-";
-	    $mapUrl1 = "https://map.yahooapis.jp/course/V1/routeMap?appid=" . $app_id . "&route=" . $context_u['lp']['latitude'] . "," . $context_u['lp']['longitude'] . "," . $loc_item['latitude'] . "," . $loc_item['longitude'] . "&width=400&height=600";
-	    $actions[1] = new UriTemplateActionBuilder("経路地図 (download)", $mapUrl1);
-	    $mapUrl2 = "https://www.google.com/maps/dir/" . $context_u['lp']['latitude'] . "," . $context_u['lp']['longitude'] . "/" . $loc_item['latitude'] . "," . $loc_item['longitude'] . "/";
-	    $actions[2] = new UriTemplateActionBuilder("経路確認（google Map）", $mapUrl2);
-	    $buttonBuilder = new ButtonTemplateBuilder($loc_item['name'], $text, null, $actions);
-	    $replyBuilder = new TemplateMessageBuilder("ButtonTemplate", $buttonBuilder);
-	    syslog(LOG_INFO, print_r($replyBuilder, true));
-
-	    return($replyBuilder);
-	}
-
-//	if ($receivedMessage == "次" || $receivedMessage == "つぎ") {
-//	    もう一回 createResponceBuilders_inScope_xxを呼ぶ
-//	}
-//	あかさたなだけは受け付ける？
-	return null;
-    }
-    else if (array_key_exists('qc', $context_u['lp'])) {
-    	//
-    	// 検索対象候補が表示されている状態
-    	//
-
-	$context_u['current_apl'] = "loc_processor";
-
-	if ($receivedMessage == "わ") return "そう。";		// なにも探さない　を選択
-
-	$app_id = "dj00aiZpPWZITUY0Uk1TZWtqZSZzPWNvbnN1bWVyc2VjcmV0Jng9NjA-";
-	$app_url = "https://map.yahooapis.jp/search/local/V1/localSearch";
-
-	$query_param = array( "lat" => $context_u['lp']['latitude'],
+    $query_param = array( "lat" => $context_u['lp']['latitude'],
 		    	  "lon" => $context_u['lp']['longitude'],
 			  "dist" => 3,
 			  "sort" => "geo",
 			  "output" => "json");
 
-
-	if (!array_key_exists($receivedMessage, $context_u['lp']['qc'])) {
-	    $query_param['query'] = $target = $receivedMessage;
-	}
-	else if (array_key_exists('gc', $context_u['lp']['qc'][$receivedMessage])) {
-	    $query_param['gc'] = $context_u['lp']['qc'][$receivedMessage]['gc'];
-	    $target = $context_u['lp']['qc'][$receivedMessage]['query'];
-	}
-	else {
-	    $query_param['query'] = $target = $context_u['lp']['qc'][$receivedMessage]['query'];
-	}
-
-	$app_param = $app_url . "?" . http_build_query($query_param);
-
-	echo $app_param . "<br>". PHP_EOL;
-
-	$ch = curl_init($app_param);
-
-	curl_setopt_array($ch, array(
-	        CURLOPT_RETURNTRANSFER => true,
-		CURLOPT_USERAGENT      => "Yahoo AppID: $app_id"));
-	$result = curl_exec($ch);
-	curl_close($ch);
-
-//	unset($context_u['lp']['qc']);
-
-	return (createResponceBuilders($target, json_decode($result, true), $context_s, $context_u));
+    if (!array_key_exists($receivedMessage, $context_u['lp']['qc'])) {
+	//
+	//  直接直接キーワード入力
+	//
+	$query_param['query'] = $target = $receivedMessage;
+    }
+    else if (array_key_exists('gc', $context_u['lp']['qc'][$receivedMessage])) {
+	//
+	//  コード指定検索
+	//
+	$query_param['gc'] = $context_u['lp']['qc'][$receivedMessage]['gc'];
+	$target = $context_u['lp']['qc'][$receivedMessage]['name'];
+    }
+    else {
+	//
+	//  間接間接キーワード検索
+	//
+	$query_param['query'] = $target = $context_u['lp']['qc'][$receivedMessage]['name'];
     }
 
-    return null;
+    $context_u['lp']['taget'] = $target;
+    $app_param = $app_url . "?" . http_build_query($query_param);
 
-};
+    echo $app_param . "<br>". PHP_EOL;
 
-//
-//  Construct Search result message (or builder objects)
-//
-//	input:	query result set
-//	output:	response text (or message builder objects)
-//	* this function split the rsult set fit to the respond format
-//
-function createResponceBuilders($target, $queryResult, &$context_s, &$context_u) {
+    $ch = curl_init($app_param);
 
+    curl_setopt_array($ch, array(
+		CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_USERAGENT      => "Yahoo AppID: $app_id"));
+    $result = curl_exec($ch);
+    curl_close($ch);
+
+    $resultSet = json_decode($result, true);
+
+    //
+    //  検索結果を整形して、コンテキスト変数に保存する
+    //
     unset($context_u['lp']['lc']);
     unset($context_u['lp']['ptr_lc']);
 
-    if ($queryResult['ResultInfo']['Count'] == 0) {
-	return ("この辺には" . $target . "はない");
-    }
-
     for ($i = 0; ; $i++) {
-	if (!array_key_exists($i, $queryResult['Feature'])) {
-	    $context_u['lp']['num_lc'] = $i;
+	if (!array_key_exists($i, $resultSet['Feature'])) {
 	    break;
 	}
 
 	$loc_item = array();
-	$loc_item['name']    = $queryResult['Feature'][$i]['Name'];
-	$loc_item['address'] = $queryResult['Feature'][$i]['Property']['Address'];
+	$loc_item['name']    = $resultSet['Feature'][$i]['Name'];
+	$loc_item['address'] = $resultSet['Feature'][$i]['Property']['Address'];
 
-	$coordinates = str_getcsv($queryResult['Feature'][$i]['Geometry']['Coordinates']);
+	$coordinates = str_getcsv($resultSet['Feature'][$i]['Geometry']['Coordinates']);
 	$loc_item['longitude'] = $coordinates[0];
 	$loc_item['latitude']  = $coordinates[1];
+
+	$dist = measureDistance($context_u['lp']['longitude'], $context_u['lp']['latitude'], $loc_item['longitude'], $loc_item['latitude']);
+        if ($dist['dir_val'] != null) {
+	    $alt = getAltitude($loc_item['longitude'], $loc_item['latitude']);
+	    $loc_item['delta']  = floatval($alt) - floatval($context_u['lp']['altitude']);
+	    $loc_item['direction'] = $dist['dir_val'];
+	    $loc_item['distance'] = $dist['dist'];
+	}
 
 	$context_u['lp']['lc'][$i] = $loc_item;
     }
 
-    return(createResponceBuilders_inScope_1($context_u));
+    return($context_u['lp']['num_lc'] = $i);
 }
 
 //
-//  Create Search result message text
+//  検索結果レスポンスレスポンスの作成
 //
-//	input:	search result (in a user context)
-//	output:	message text
-//
-function createResponceBuilders_inScope_1(&$context_u) {
+function createQueryResultResponce(&$context_u) {
 
-    $keys = array('い', 'き', 'し', 'ち', 'に', 'ひ', 'み');
+    $keys = array('1', '2', '3', '4', '5', '6', '7');
 
-    $replyMessage = "";
+    $textdata = "";
     $context_u['lp']['ptr_lc'] = isset($context_u['lp']['ptr_lc']) ? $context_u['lp']['ptr_lc'] + 7 : 0;
 
     for ($i = 0; $i < 7; $i++) {
 	if (!array_key_exists($context_u['lp']['ptr_lc'] + $i, $context_u['lp']['lc'])) {
-	    $replyMessage .= "もうない";
+	    $textdata .= "もうない";
 	    break;
 	}
 
 	$loc_item = $context_u['lp']['lc'][$context_u['lp']['ptr_lc'] + $i];
-	$replyMessage .= $keys[$i] . " : " . $loc_item['name'] . PHP_EOL;
-	$replyMessage .= "      " . mb_strimwidth($loc_item['address'], 0, 23, "&", "UTF-8") . PHP_EOL;
-
-	$dist = measureDistance($context_u['lp']['longitude'], $context_u['lp']['latitude'], $loc_item['longitude'], $loc_item['latitude']);
-        if ($dist['dir_val'] != null) {
-	    $replyMessage .= "     " . $dist['dir_val'] . sprintf("%5.2f", $dist['dist']) . "km";
-
-	    $alt = getAltitude($loc_item['longitude'], $loc_item['latitude']);
-	    $replyMessage .= "  Δ=" . sprintf("%+4.1f",(floatval($alt) - floatval($context_u['lp']['altitude']))) . "m" . PHP_EOL;
-        }
+	$textdata .= $keys[$i] . " : " . $loc_item['name'] . PHP_EOL;
+	$textdata .= "      " . mb_strimwidth($loc_item['address'], 0, 23, "&", "UTF-8") . PHP_EOL;
+	/*
+	if (isset($loc_item['direction'])) {
+	    $textdata .= "     " . $loc_item['direction'] . sprintf(" %5.2f", $loc_item['distance']) . "km";
+	    $textdata .= " Δ=" . sprintf("%+4.1f", $loc_item['delta']) . "m" . PHP_EOL;
+	}
+	*/
     }
+
+    $textMessage = new TextMessageBuilder($textdata);
+
+    $selectPanel = createSelectPanelBuilder_2();
+    $replyMessage = new MultiMessageBuilder();
+    $replyMessage->add($textMessage);
+    $replyMessage->add($selectPanel);
 
     return ($replyMessage);
 }
 
+
 //
-//  Create Search result message builder objects
+//  施設情報と地図へのリンクをまとめて返信する
 //
-//	input:	search result (in a user context)
-//	output:	message builder objects
-//
-function createResponceBuilders_inScope_2(&$context_u) {
+function createFacilityInfoResponce($ofs, &$context_u) {
 
-    $replyBuilder = new MultiMessageBuilder();
-    $context_u['lp']['ptr_lc'] = isset($context_u['lp']['ptr_lc']) ? $context_u['lp']['ptr_lc'] + 5 : 0;
+    if (!array_key_exists($ofs + $context_u['lp']['ptr_lc'], $context_u['lp']['lc'])) {
+	syslog(LOG_ERR, "createFacilityInfo: illegal offset: " . $receivedMessage);
+	return(null);
+    }
+    
+    $loc_item = $context_u['lp']['lc'][$ofs + $context_u['lp']['ptr_lc']];
 
-    for ($i = 0; $i < 5; $i++) {
-	if (!array_key_exists($context_u['lp']['ptr_lc'] + $i, $context_u['lp']['lc'])) {
-	    $replyBuilder->add(new TextMessageBuilder("もうない"));
-	    break;
-	}
-
-	$loc_item = $context_u['lp']['lc'][$context_u['lp']['ptr_lc'] + $i];
-	$address = mb_strimwidth($loc_item['address'], 0, 23, "&", "UTF-8");
-
-	$dist = measureDistance($context_u['lp']['longitude'], $context_u['lp']['latitude'], $loc_item['longitude'], $loc_item['latitude']);
-        if ($dist['dir_val'] != null) {
-	    $address .= PHP_EOL . $dist['dir_val'] . "に" . sprintf("%5.2f", $dist['dist']) . "km";
-	    $address .= "  高低差:" . (floatval(getAltitude($loc_item['longitude'], $loc_item['latitude'])) - floatval($context_u['lp']['altitude'])) . "m";
-        }
-	$replyBuilder->add(new LocationMessageBuilder($loc_item['name'], $address, $loc_item['latitude'], $loc_item['longitude']));
+    $text = mb_strimwidth($loc_item['address'], 0, 32, "...", "UTF-8") . PHP_EOL;
+    if (isset($loc_item['direction'])) {
+	$text .= $loc_item['direction'] . sprintf(" %5.2f", $loc_item['distance']) . "km";
+	$text .= " Δ=" . sprintf("%+4.1f", $loc_item['delta']) . "m" . PHP_EOL;
     }
 
-    return ($replyBuilder);
+    $actions[0] = new PostbackTemplateActionBuilder("場所を送信", "map," . $ofs);
+    $app_id = "dj00aiZpPWZITUY0Uk1TZWtqZSZzPWNvbnN1bWVyc2VjcmV0Jng9NjA-";
+    $mapUrl1 = "https://map.yahooapis.jp/course/V1/routeMap?appid=" . $app_id . "&route=" . $context_u['lp']['latitude'] . "," . $context_u['lp']['longitude'] . "," . $loc_item['latitude'] . "," . $loc_item['longitude'] . "&width=400&height=600";
+    $actions[1] = new UriTemplateActionBuilder("経路地図 (download)", $mapUrl1);
+    $mapUrl2 = "https://www.google.com/maps/dir/" . $context_u['lp']['latitude'] . "," . $context_u['lp']['longitude'] . "/" . $loc_item['latitude'] . "," . $loc_item['longitude'] . "/";
+    $actions[2] = new UriTemplateActionBuilder("経路確認（google Map）", $mapUrl2);
+    $buttonBuilder = new ButtonTemplateBuilder($loc_item['name'], $text, null, $actions);
+    $replyBuilder = new TemplateMessageBuilder("ButtonTemplate", $buttonBuilder);
+
+    return($replyBuilder);
 }
 
 //
@@ -271,7 +398,7 @@ function getAltitude($loc_longitude, $loc_latitude) {
     $ch = curl_init($app_url . '?' . http_build_query($app_params));
 
     curl_setopt_array($ch, array(
-	        CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_RETURNTRANSFER => true,
 		CURLOPT_USERAGENT      => "Yahoo AppID: $app_id"));
     $result = json_decode(curl_exec($ch), true);
     curl_close($ch);
@@ -306,26 +433,6 @@ function measureDistance($src_lon, $src_lat, $dst_lon, $dst_lat) {
     }
 
     return($dist);
-}
-
-function Postback_callback($category, $param, &$context_s, &$context_u) {
-
-    if ($category != "map") {
-	syslog(LOG_ERR, "Illigal postback category.");
-	return null;
-    }
-
-    $keys = array("い", "き", "し", "ち", "に", "ひ", "み");
-    $ofs = array_search($param, $keys);
-
-    if ($ofs == FALSE) {
-	syslog(LOG_ERR, "Illegal postback parameter.");
-	return null;
-    }
-    	
-    $loc_item = $context_u['lp']['lc'][$context_u['lp']['ptr_lc'] + $ofs];
-    $address = $loc_item['address'];
-    return(new LocationMessageBuilder($loc_item['name'], $loc_item['address'], $loc_item['latitude'], $loc_item['longitude']));
 }
 
 ?>

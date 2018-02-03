@@ -26,9 +26,9 @@ handlers:
   application_readable: true
 
 #images
-- url: /images/(.+\.(JPG|jpeg|gif))$
+- url: /images/(.+)$
   static_files: images/\1
-  upload: images/(.+\.(JPG|jpeg|gif))
+  upload: images/(.+)
   application_readable: true
 
 #main page

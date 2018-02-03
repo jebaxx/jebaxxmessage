@@ -88,7 +88,7 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 	    $loc_latitude = $event->getLatitude();
 	    $loc_longitude = $event->getLongitude();
 	    syslog(LOG_INFO, "LAT:".$loc_latitude."  LON:".$loc_longitude);
-	    $replyMessage = locationProcessor($loc_longitude, $loc_latitude, $context_s, $context_u);
+	    $replyMessage = enterStartPoint($loc_longitude, $loc_latitude, $context_s, $context_u);
 	}
 	else if ($event->getMessageType() == 'text') {
 
@@ -134,7 +134,7 @@ else {
     $context_u['timestamp'] = 1111;
 
     if (array_key_exists('latitude', $_POST)) {
-    	$replyMessage = locationProcessor($_POST['longitude'], $_POST['latitude'], $context_s, $context_u);
+    	$replyMessage = enterStartPoint($_POST['longitude'], $_POST['latitude'], $context_s, $context_u);
     }
     else {
 	if (($replyMessage = messageDispatcher($_POST['queryMessage'], $context_s, $context_u)) == null) {
@@ -150,7 +150,7 @@ else {
 
 function messageDispatcher($receivedMessage, &$context_s, &$context_u) {
 
-    global $respondTrainQuery, $reportSensData, $locationSearch;
+    global $respondTrainQuery, $reportSensData, $locMessageProcessor;
 
     //
     //  Messages Entries to whitch each application respond to
@@ -165,9 +165,9 @@ function messageDispatcher($receivedMessage, &$context_s, &$context_u) {
 		'keyword' => array ("/^気温/")
 		),
 	'loc_processor' => array(
-		'func' => $locationSearch,
+		'func' => $locMessageProcessor ,
 		'keyword' => array ()
-		)
+		),
 	);
 
     $user_id = $context_u['user_id'];
@@ -178,7 +178,7 @@ function messageDispatcher($receivedMessage, &$context_s, &$context_u) {
     //  前回応答したアプリのパターンを先に確認する
     //
     if (isset($context_u['current_apl'])) {
-    	
+
     	$aplTable = $messageTbl[$current_apl = $context_u['current_apl']];
 
 	for ($i = 0; isset($aplTable['keyword'][$i]) ; $i++) {
