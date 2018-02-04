@@ -102,8 +102,8 @@ function createSelectPanelBuilder_2() {
 function Postback_callback($category, $param, &$context_s, &$context_u) {
 
     //
-    //  「場所を送信」が選択された際、Postbackメッセージをアプリに送る
-    //  アプリは場所を示すlocation messageを送り、ユーザーにタップさせる
+    //  「場所を送信」が選択されると、モバイルアプリからPostbackメッセージが送られて来る
+    //  その応答として場所を示すlocation messageをモバイルアプリに送り、ユーザーにタップさせる
     //
     if ($category != "map") {
 	syslog(LOG_ERR, "Illigal postback category.");
@@ -136,6 +136,40 @@ $locMessageProcessor = function($receivedMessage, $i, $matched, &$context_s, &$c
     syslog(LOG_INFO, "Message = " . $receivedMessage . " : state = " . $context_u['lp']['state']);
     echo "message = " . $receivedMessage . "<br>" . PHP_EOL;
 
+//////////////////////////////////////////////////////////////////////////////////////////
+    if ($i == 0) {
+	//
+	//  探索範囲の変更指示
+	//
+
+	if (!isset($context_u['lp']['area_width']))  $context_u['lp']['area_width'] = 3;
+
+	if (($matched[1] == "広く") || ($matched[1] == "ひろく")) {
+	    if ($context_u['lp']['area_width'] < 7) $context_u['lp']['area_width']++;
+	}
+	else if (($matched[1] == "狭く") || ($matched[1] == "せまく")) {
+	    if ($context_u['lp']['area_width'] > 1) $context_u['lp']['area_width']--;
+	}
+	else if (($w = intval($matched[1])) > 0 && ($w < 8)) {
+	    $context_u['lp']['area_width'] = intval($matched[1]);
+	}
+
+	return("探索領域を半経" . $context_u['lp']['area_width'] . "km に設定した");
+    }
+
+    if ($i == 1) {
+	//
+	//  検索結果並び順の指定
+	//
+
+	if ($matched[1] == "近い")
+	    $context_u['lp']['orderBy'] = "近い順";
+
+	if ($matched[1] == "評判")
+	    $context_u['lp']['orderBy'] = "評判順";
+
+	return("結果を" . $context_u['lp']['orderBy'] . "に並べるよ");
+    }
 //////////////////////////////////////////////////////////////////////////////////////////
     if ($context_u['lp']['state'] == "始点特定") {
 
@@ -239,10 +273,13 @@ function execLocationQuery($receivedMessage, &$context_u) {
     $app_id = "dj00aiZpPWZITUY0Uk1TZWtqZSZzPWNvbnN1bWVyc2VjcmV0Jng9NjA-";
     $app_url = "https://map.yahooapis.jp/search/local/V1/localSearch";
 
+    $area_width = isset($context_u['lp']['area_width']) ? $context_u['lp']['area_width'] : 3;
+    $orderBy    = isset($context_u['lp']['orderBy'])    ? ($context_u['lp']['orderBy'] == '評判順' ? 'hybrid' : 'geo') : 'geo';
+
     $query_param = array( "lat" => $context_u['lp']['latitude'],
 		    	  "lon" => $context_u['lp']['longitude'],
-			  "dist" => 3,
-			  "sort" => "geo",
+			  "dist" => $area_width,
+			  "sort" => $orderBy,
 			  "output" => "json");
 
     if (!array_key_exists($receivedMessage, $context_u['lp']['qc'])) {
@@ -269,6 +306,8 @@ function execLocationQuery($receivedMessage, &$context_u) {
     $app_param = $app_url . "?" . http_build_query($query_param);
 
     echo $app_param . "<br>". PHP_EOL;
+
+    syslog(LOG_INFO, $app_param);
 
     $ch = curl_init($app_param);
 
@@ -407,7 +446,7 @@ function getAltitude($loc_longitude, $loc_latitude) {
 }
 
 //
-//  calculate distance of specified two place
+//  calculate distance of given two places
 //
 //	input:	source point and destination point (of longitude and latitude)
 //	output:	distance and direction of distination point
