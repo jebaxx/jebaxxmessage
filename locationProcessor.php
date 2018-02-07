@@ -76,19 +76,19 @@ function createSelectPanelBuilder_1() {
     return(new ImagemapMessageBuilder($baseUrl, "コマンド選択パネル", $baseSize, $callbacks));
 }
 
-function createSelectPanelBuilder_2() {
+function createSelectPanelBuilder_2($offset) {
 
     $baseUrl = "https://jebaxxmessage.appspot.com/images/menu02";
     $baseSize = new BaseSizeBuilder(400, 1040);
     $callbacks = array();
-    array_push($callbacks, new ImagemapMessageActionBuilder("1", new AreaBuilder(  0,   0, 190, 195)));
-    array_push($callbacks, new ImagemapMessageActionBuilder("2", new AreaBuilder(190,   0, 190, 195)));
-    array_push($callbacks, new ImagemapMessageActionBuilder("3", new AreaBuilder(380,   0, 190, 195)));
-    array_push($callbacks, new ImagemapMessageActionBuilder("4", new AreaBuilder(570,   0, 190, 195)));
-    array_push($callbacks, new ImagemapMessageActionBuilder("5", new AreaBuilder(  0, 200, 190, 195)));
-    array_push($callbacks, new ImagemapMessageActionBuilder("6", new AreaBuilder(190, 200, 190, 195)));
-    array_push($callbacks, new ImagemapMessageActionBuilder("7", new AreaBuilder(380, 200, 190, 195)));
-    array_push($callbacks, new ImagemapMessageActionBuilder("8", new AreaBuilder(570, 200, 190, 195)));
+    array_push($callbacks, new ImagemapMessageActionBuilder($offset+1,   new AreaBuilder(  0,   0, 190, 195)));
+    array_push($callbacks, new ImagemapMessageActionBuilder($offset+2, new AreaBuilder(190,   0, 190, 195)));
+    array_push($callbacks, new ImagemapMessageActionBuilder($offset+3, new AreaBuilder(380,   0, 190, 195)));
+    array_push($callbacks, new ImagemapMessageActionBuilder($offset+4, new AreaBuilder(570,   0, 190, 195)));
+    array_push($callbacks, new ImagemapMessageActionBuilder($offset+5, new AreaBuilder(  0, 200, 190, 195)));
+    array_push($callbacks, new ImagemapMessageActionBuilder($offset+6, new AreaBuilder(190, 200, 190, 195)));
+    array_push($callbacks, new ImagemapMessageActionBuilder($offset+7, new AreaBuilder(380, 200, 190, 195)));
+    array_push($callbacks, new ImagemapMessageActionBuilder($offset+8, new AreaBuilder(570, 200, 190, 195)));
 
     array_push($callbacks, new ImagemapMessageActionBuilder("次",     new AreaBuilder(770,   0, 190, 260)));
     array_push($callbacks, new ImagemapMessageActionBuilder("再検索", new AreaBuilder(770, 200, 190, 260)));
@@ -232,19 +232,12 @@ $locMessageProcessor = function($receivedMessage, $i, $matched, &$context_s, &$c
 	    return(createStartPointMessage($context_u));      //  始点特定状態に戻す
 	}
 
-	$keys = array('1', '2', '3', '4', '5', '6', '7', '8');
-
-	if (($ofs = array_search($receivedMessage, $keys)) === FALSE) {
-	$context_u['lp']['state'] = "ニュートラル";
-	    return(null);
-	}
-
-	if (!array_key_exists($ofs + $context_u['lp']['ptr_lc'], $context_u['lp']['lc'])) {
-	    return("なんか違ってる");
+	if (!array_key_exists(($num = intval($receivedMessage)-1), $context_u['lp']['lc'])) {
+	    return("なんか番号が違ってる");
 	}
         
 	$context_u['lp']['state'] = "施設特定";
-	return(createDestinationInfoResponce($ofs, $context_u));
+	return(createDestinationInfoResponce($num, $context_u));
     }
     
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -260,18 +253,11 @@ $locMessageProcessor = function($receivedMessage, $i, $matched, &$context_s, &$c
 	    return(createStartPointMessage($context_u));      //  始点特定状態に戻す
 	}
 
-	$keys = array('1', '2', '3', '4', '5', '6', '7', '8');
-
-	if (($ofs = array_search($receivedMessage, $keys)) === FALSE) {
-	$context_u['lp']['state'] = "ニュートラル";
-	    return(null);
+	if (!array_key_exists(($num = intval($receivedMessage)-1), $context_u['lp']['lc'])) {
+	    return("なんか番号が違ってる");
 	}
 
-	if (!array_key_exists($ofs + $context_u['lp']['ptr_lc'], $context_u['lp']['lc'])) {
-	    return("なんか違ってる");
-	}
-
-	return(createDestinationInfoResponce($ofs, $context_u));
+	return(createDestinationInfoResponce($num, $context_u));
     }
 };
 
@@ -369,20 +355,19 @@ function execLocationQuery($receivedMessage, &$context_u) {
 //
 function createQueryResultResponce(&$context_u) {
 
-    $keys = array('1', '2', '3', '4', '5', '6', '7', '8');
-
     $textdata = "";
     $context_u['lp']['ptr_lc'] = isset($context_u['lp']['ptr_lc']) ? $context_u['lp']['ptr_lc'] + 8 : 0;
 
     for ($i = 0; $i < 8; $i++) {
+        if ($textdata != "") $textdata .= PHP_EOL;
 	if (!array_key_exists($context_u['lp']['ptr_lc'] + $i, $context_u['lp']['lc'])) {
 	    $textdata .= "もうない";
 	    break;
 	}
 
 	$loc_item = $context_u['lp']['lc'][$context_u['lp']['ptr_lc'] + $i];
-	$textdata .= $keys[$i] . " : " . $loc_item['name'] . PHP_EOL;
-	$textdata .= "      " . mb_strimwidth($loc_item['address'], 0, 23, "&", "UTF-8") . PHP_EOL;
+	$textdata .= $i+1 . " : " . $loc_item['name'] . PHP_EOL;
+	$textdata .= "      " . mb_strimwidth($loc_item['address'], 0, 25, "&", "UTF-8");
 	/*
 	if (isset($loc_item['direction'])) {
 	    $textdata .= "     " . $loc_item['direction'] . sprintf(" %5.2f", $loc_item['distance']) . "km";
@@ -393,7 +378,7 @@ function createQueryResultResponce(&$context_u) {
 
     $textMessage = new TextMessageBuilder($textdata);
 
-    $selectPanel = createSelectPanelBuilder_2();
+    $selectPanel = createSelectPanelBuilder_2($context_u['lp']['ptr_lc']);
     $replyMessage = new MultiMessageBuilder();
     $replyMessage->add($textMessage);
     $replyMessage->add($selectPanel);
@@ -405,24 +390,24 @@ function createQueryResultResponce(&$context_u) {
 //
 //  施設情報と地図へのリンクをまとめて返信する
 //
-function createDestinationInfoResponce($ofs, &$context_u) {
+function createDestinationInfoResponce($num, &$context_u) {
 
-    if (!array_key_exists($ofs + $context_u['lp']['ptr_lc'], $context_u['lp']['lc'])) {
-	syslog(LOG_ERR, "createDestinationInfo: illegal offset: " . $receivedMessage);
+    if (!array_key_exists($num  , $context_u['lp']['lc'])) {
+	syslog(LOG_ERR, "createDestinationInfo: illegal item number: " . $num);
 	return(null);
     }
     
-    $loc_item = $context_u['lp']['lc'][$ofs + $context_u['lp']['ptr_lc']];
+    $loc_item = $context_u['lp']['lc'][$num];
 
     $addr_text = $loc_item['address'] . PHP_EOL;
     if (isset($loc_item['direction'])) {
 	$addr_text .= $loc_item['direction'] . sprintf(" %5.2f", $loc_item['distance']) . "km";
-	$addr_text .= " Δ=" . sprintf("%+4.1f", $loc_item['delta']) . "m" . PHP_EOL;
+	$addr_text .= " Δ=" . sprintf("%+4.1f", $loc_item['delta']) . "m";
     }
 
     $locMessage = new LocationMessageBuilder($loc_item['name'], $addr_text, $loc_item['latitude'], $loc_item['longitude']);
 
-//    $actions[0] = new PostbackTemplateActionBuilder("場所を送信", "map," . $ofs);
+//    $actions[0] = new PostbackTemplateActionBuilder("場所を送信", "map," . $num);
     $app_id = "dj00aiZpPWZITUY0Uk1TZWtqZSZzPWNvbnN1bWVyc2VjcmV0Jng9NjA-";
     $mapUrl1 = "https://map.yahooapis.jp/course/V1/routeMap?appid=" . $app_id . "&route=" . $context_u['lp']['latitude'] . "," . $context_u['lp']['longitude'] . "," . $loc_item['latitude'] . "," . $loc_item['longitude'] . "&width=400&height=600";
     $actions[0] = new UriTemplateActionBuilder("経路地図 (download)", $mapUrl1);
