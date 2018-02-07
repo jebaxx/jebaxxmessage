@@ -74,7 +74,7 @@ function check_save_action() {
     $gs_holidayinfo = "gs://" . CloudStorageTools::getDefaultGoogleStorageBucketName() . "/holiday_info.csv";
 
     if (isset($_POST['action']) && ($_POST['action'] == '再取得')) {
-    	$holiday_inf_csv = file_get_contents("http://www8.cao.go.jp/chosei/shukujitsu/syukujitsu.csv");
+    	$holiday_inf_csv = file_get_contents("http://www8.cao.go.jp/chosei/shukujitsu/syukujitsu_kyujitsu.csv");
 
 	if ($holiday_inf_csv != FALSE) {
 	    //

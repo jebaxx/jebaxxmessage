@@ -166,7 +166,7 @@ function messageDispatcher($receivedMessage, &$context_s, &$context_u) {
 		),
 	'loc_processor' => array(
 		'func' => $locMessageProcessor ,
-		'keyword' => array ("/範囲.*(広く|ひろく|狭く|せまく|1|2|3|4|5|6|7)/", "/(近い|評判)順/"),
+		'keyword' => array ("/範囲.*(広く|ひろく|狭く|せまく|1|2|3|4|5|6|7)/", "/範囲/", "/(近い|評判)順/", "/並べ方/"),
 		),
 	);
 

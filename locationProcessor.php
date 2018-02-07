@@ -23,7 +23,7 @@ use \LINE\LINEBot\ImagemapActionBuilder\AreaBuilder;
 function enterStartPoint($longitude, $latitude, &$context_s, &$context_u) {
 
     $context_u['current_apl']     = "loc_processor";
-    unset($context_u['lp']);
+//    unset($context_u['lp']);
     $context_u['lp']['state']     = "始点特定";
     $context_u['lp']['altitude']  = getAltitude($longitude, $latitude);
     $context_u['lp']['longitude'] = $longitude;
@@ -97,7 +97,7 @@ function createSelectPanelBuilder_2() {
 }
 
 //
-//  Postbackイベントのエントリーポイント
+//  Postbackイベントのエントリーポイント（現在未使用だが）
 //
 function Postback_callback($category, $param, &$context_s, &$context_u) {
 
@@ -159,6 +159,12 @@ $locMessageProcessor = function($receivedMessage, $i, $matched, &$context_s, &$c
 
     if ($i == 1) {
 	//
+	//  探索範囲の確認
+	//
+	return("探索範囲は半径" . (isset($context_u['lp']['area_width']) ? $context_u['lp']['area_width'] : 3) . "km"); 
+    }
+    if ($i == 2) {
+	//
 	//  検索結果並び順の指定
 	//
 
@@ -168,6 +174,12 @@ $locMessageProcessor = function($receivedMessage, $i, $matched, &$context_s, &$c
 	if ($matched[1] == "評判")
 	    $context_u['lp']['orderBy'] = "評判順";
 
+	return("結果を" . (isset($context_u['lp']['orderBy']) ? $context_u['lp']['orderBy'] : "近い順") . "に並べるよ"); 
+    }
+    if ($i == 3) {
+	//
+	//  並び順の確認
+	//
 	return("結果を" . $context_u['lp']['orderBy'] . "に並べるよ");
     }
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -220,7 +232,7 @@ $locMessageProcessor = function($receivedMessage, $i, $matched, &$context_s, &$c
 	    return(createStartPointMessage($context_u));      //  始点特定状態に戻す
 	}
 
-	$keys = array('1', '2', '3', '4', '5', '6', '7');
+	$keys = array('1', '2', '3', '4', '5', '6', '7', '8');
 
 	if (($ofs = array_search($receivedMessage, $keys)) === FALSE) {
 	$context_u['lp']['state'] = "ニュートラル";
@@ -232,7 +244,7 @@ $locMessageProcessor = function($receivedMessage, $i, $matched, &$context_s, &$c
 	}
         
 	$context_u['lp']['state'] = "施設特定";
-	return(createFacilityInfoResponce($ofs, $context_u));
+	return(createDestinationInfoResponce($ofs, $context_u));
     }
     
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -248,7 +260,7 @@ $locMessageProcessor = function($receivedMessage, $i, $matched, &$context_s, &$c
 	    return(createStartPointMessage($context_u));      //  始点特定状態に戻す
 	}
 
-	$keys = array('1', '2', '3', '4', '5', '6', '7');
+	$keys = array('1', '2', '3', '4', '5', '6', '7', '8');
 
 	if (($ofs = array_search($receivedMessage, $keys)) === FALSE) {
 	$context_u['lp']['state'] = "ニュートラル";
@@ -259,7 +271,7 @@ $locMessageProcessor = function($receivedMessage, $i, $matched, &$context_s, &$c
 	    return("なんか違ってる");
 	}
 
-	return(createFacilityInfoResponce($ofs, $context_u));
+	return(createDestinationInfoResponce($ofs, $context_u));
     }
 };
 
@@ -357,12 +369,12 @@ function execLocationQuery($receivedMessage, &$context_u) {
 //
 function createQueryResultResponce(&$context_u) {
 
-    $keys = array('1', '2', '3', '4', '5', '6', '7');
+    $keys = array('1', '2', '3', '4', '5', '6', '7', '8');
 
     $textdata = "";
-    $context_u['lp']['ptr_lc'] = isset($context_u['lp']['ptr_lc']) ? $context_u['lp']['ptr_lc'] + 7 : 0;
+    $context_u['lp']['ptr_lc'] = isset($context_u['lp']['ptr_lc']) ? $context_u['lp']['ptr_lc'] + 8 : 0;
 
-    for ($i = 0; $i < 7; $i++) {
+    for ($i = 0; $i < 8; $i++) {
 	if (!array_key_exists($context_u['lp']['ptr_lc'] + $i, $context_u['lp']['lc'])) {
 	    $textdata .= "もうない";
 	    break;
@@ -393,30 +405,34 @@ function createQueryResultResponce(&$context_u) {
 //
 //  施設情報と地図へのリンクをまとめて返信する
 //
-function createFacilityInfoResponce($ofs, &$context_u) {
+function createDestinationInfoResponce($ofs, &$context_u) {
 
     if (!array_key_exists($ofs + $context_u['lp']['ptr_lc'], $context_u['lp']['lc'])) {
-	syslog(LOG_ERR, "createFacilityInfo: illegal offset: " . $receivedMessage);
+	syslog(LOG_ERR, "createDestinationInfo: illegal offset: " . $receivedMessage);
 	return(null);
     }
     
     $loc_item = $context_u['lp']['lc'][$ofs + $context_u['lp']['ptr_lc']];
 
-    $text = mb_strimwidth($loc_item['address'], 0, 32, "...", "UTF-8") . PHP_EOL;
+    $addr_text = $loc_item['address'] . PHP_EOL;
     if (isset($loc_item['direction'])) {
-	$text .= $loc_item['direction'] . sprintf(" %5.2f", $loc_item['distance']) . "km";
-	$text .= " Δ=" . sprintf("%+4.1f", $loc_item['delta']) . "m" . PHP_EOL;
+	$addr_text .= $loc_item['direction'] . sprintf(" %5.2f", $loc_item['distance']) . "km";
+	$addr_text .= " Δ=" . sprintf("%+4.1f", $loc_item['delta']) . "m" . PHP_EOL;
     }
 
-    $actions[0] = new PostbackTemplateActionBuilder("場所を送信", "map," . $ofs);
+    $locMessage = new LocationMessageBuilder($loc_item['name'], $addr_text, $loc_item['latitude'], $loc_item['longitude']);
+
+//    $actions[0] = new PostbackTemplateActionBuilder("場所を送信", "map," . $ofs);
     $app_id = "dj00aiZpPWZITUY0Uk1TZWtqZSZzPWNvbnN1bWVyc2VjcmV0Jng9NjA-";
     $mapUrl1 = "https://map.yahooapis.jp/course/V1/routeMap?appid=" . $app_id . "&route=" . $context_u['lp']['latitude'] . "," . $context_u['lp']['longitude'] . "," . $loc_item['latitude'] . "," . $loc_item['longitude'] . "&width=400&height=600";
-    $actions[1] = new UriTemplateActionBuilder("経路地図 (download)", $mapUrl1);
+    $actions[0] = new UriTemplateActionBuilder("経路地図 (download)", $mapUrl1);
     $mapUrl2 = "https://www.google.com/maps/dir/" . $context_u['lp']['latitude'] . "," . $context_u['lp']['longitude'] . "/" . $loc_item['latitude'] . "," . $loc_item['longitude'] . "/";
-    $actions[2] = new UriTemplateActionBuilder("経路確認（google Map）", $mapUrl2);
-    $buttonBuilder = new ButtonTemplateBuilder($loc_item['name'], $text, null, $actions);
-    $replyBuilder = new TemplateMessageBuilder("ButtonTemplate", $buttonBuilder);
-
+    $actions[1] = new UriTemplateActionBuilder("経路確認（google Map）", $mapUrl2);
+    $buttonBuilder = new ButtonTemplateBuilder($loc_item['name'], $addr_text, null, $actions);
+    $buttonTemplateMessage = new TemplateMessageBuilder("ButtonTemplate", $buttonBuilder);
+    $replyBuilder = new MultiMessageBuilder();
+    $replyBuilder->add($buttonTemplateMessage);
+    $replyBuilder->add($locMessage);
     return($replyBuilder);
 }
 
