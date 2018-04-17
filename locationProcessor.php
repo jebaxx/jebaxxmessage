@@ -157,12 +157,15 @@ $locMessageProcessor = function($receivedMessage, $i, $matched, &$context_s, &$c
 	return("探索領域を半経" . $context_u['lp']['area_width'] . "km に設定した");
     }
 
+//////////////////////////////////////////////////////////////////////////////////////////
     if ($i == 1) {
 	//
 	//  探索範囲の確認
 	//
 	return("探索範囲は半径" . (isset($context_u['lp']['area_width']) ? $context_u['lp']['area_width'] : 3) . "km"); 
     }
+
+//////////////////////////////////////////////////////////////////////////////////////////
     if ($i == 2) {
 	//
 	//  検索結果並び順の指定
@@ -182,7 +185,6 @@ $locMessageProcessor = function($receivedMessage, $i, $matched, &$context_s, &$c
 	//
 	return("結果を" . $context_u['lp']['orderBy'] . "に並べるよ");
     }
-//////////////////////////////////////////////////////////////////////////////////////////
     if ($context_u['lp']['state'] == "始点特定") {
 
 	if ($receivedMessage == 'これ以外') {
@@ -229,10 +231,14 @@ $locMessageProcessor = function($receivedMessage, $i, $matched, &$context_s, &$c
         
 	if ($receivedMessage == '再検索') {
 	    $context_u['lp']['state']     = "始点特定";
-	    return(createStartPointMessage($context_u));      //  始点特定状態に戻す
+	    return(createStartPointMessage($context_u));	//  始点特定状態に戻す
 	}
 
-	if (!array_key_exists(($num = intval($receivedMessage)-1), $context_u['lp']['lc'])) {
+	if (($num = intval($receivedMessage) - 1) == -1) {
+	    return(null);					//  無効な入力値
+	}
+
+	if (!array_key_exists($num, $context_u['lp']['lc'])) {
 	    return("なんか番号が違ってる");
 	}
         
@@ -253,7 +259,11 @@ $locMessageProcessor = function($receivedMessage, $i, $matched, &$context_s, &$c
 	    return(createStartPointMessage($context_u));      //  始点特定状態に戻す
 	}
 
-	if (!array_key_exists(($num = intval($receivedMessage)-1), $context_u['lp']['lc'])) {
+	if (($num = intval($receivedMessage) - 1) == -1) {
+	    return(null);					//  無効な入力値
+	}
+
+	if (!array_key_exists($num, $context_u['lp']['lc'])) {
 	    return("なんか番号が違ってる");
 	}
 
@@ -276,6 +286,7 @@ function execLocationQuery($receivedMessage, &$context_u) {
 
     $query_param = array( "lat" => $context_u['lp']['latitude'],
 		    	  "lon" => $context_u['lp']['longitude'],
+		    	  "results" => 20,
 			  "dist" => $area_width,
 			  "sort" => $orderBy,
 			  "output" => "json");
@@ -351,7 +362,7 @@ function execLocationQuery($receivedMessage, &$context_u) {
 }
 
 //
-//  検索結果レスポンスレスポンスの作成
+//  検索結果一覧リストを送信
 //
 function createQueryResultResponce(&$context_u) {
 
@@ -388,7 +399,7 @@ function createQueryResultResponce(&$context_u) {
 
 
 //
-//  施設情報と地図へのリンクをまとめて返信する
+//  施設詳細情報データを送信
 //
 function createDestinationInfoResponce($num, &$context_u) {
 
@@ -409,7 +420,7 @@ function createDestinationInfoResponce($num, &$context_u) {
 
 //    $actions[0] = new PostbackTemplateActionBuilder("場所を送信", "map," . $num);
     $app_id = "dj00aiZpPWZITUY0Uk1TZWtqZSZzPWNvbnN1bWVyc2VjcmV0Jng9NjA-";
-    $mapUrl1 = "https://map.yahooapis.jp/course/V1/routeMap?appid=" . $app_id . "&route=" . $context_u['lp']['latitude'] . "," . $context_u['lp']['longitude'] . "," . $loc_item['latitude'] . "," . $loc_item['longitude'] . "&width=400&height=600";
+    $mapUrl1 = "https://map.yahooapis.jp/course/V1/routeMap?appid=" . $app_id . "&route=" . $context_u['lp']['latitude'] . "," . $context_u['lp']['longitude'] . "," . $loc_item['latitude'] . "," . $loc_item['longitude'] . "&width=600&height=900";
     $actions[0] = new UriTemplateActionBuilder("経路地図 (download)", $mapUrl1);
     $mapUrl2 = "https://www.google.com/maps/dir/" . $context_u['lp']['latitude'] . "," . $context_u['lp']['longitude'] . "/" . $loc_item['latitude'] . "," . $loc_item['longitude'] . "/";
     $actions[1] = new UriTemplateActionBuilder("経路確認（google Map）", $mapUrl2);

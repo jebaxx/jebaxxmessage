@@ -198,7 +198,7 @@ function normalTrainQuery($receivedMessage, $_time, $_station, $_route, &$contex
 	$station_list .= ")";
 
 	if (preg_match("/".$station_list."/", $receivedMessage, $result) == FALSE) {
-	    return("その駅はしらない");
+	    return(createStationSelectorMessage($context_u));
 	}
 
 	$station_name = $result[1];
@@ -208,6 +208,33 @@ function normalTrainQuery($receivedMessage, $_time, $_station, $_route, &$contex
     }
 
     $context_u['tq']['station'] = $station_name;	// CONTEXT (station)
+
+    //
+    // 履歴データの更新
+    //
+    if (!isset($context_u['tq']['recent'])) {
+	//
+	// コンテキスト初期化
+	//
+	$context_u['tq']['recent'] = array();
+	foreach($packedStation as $stationName => $stationInfo) {
+	    array_push($context_u['tq']['recent'], $stationName);
+	}
+    }
+
+    if (($n = array_search($station_name, $context_u['tq']['recent'])) === FALSE) {
+	//
+	// 新しい駅を追加
+	//
+	array_unshift($context_u['tq']['recent'], $station_name);
+    }
+    else if ($n !== 0) {
+	//
+	// 先頭以外の位置にあれば入れ替え操作
+	//
+ 	array_splice($context_u['tq']['recent'], $n, 1);
+	array_unshift($context_u['tq']['recent'], $station_name);
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////
     //    対象ルートをセットする
@@ -236,6 +263,8 @@ function normalTrainQuery($receivedMessage, $_time, $_station, $_route, &$contex
 
     $context_u['tq']['route'] = $route_name;		// CONTEXT (route)
 
+
+    syslog(LOG_INFO, "Q=" . $station_name . ":" . $route_name . ":" . intval($currentTime / 60) . ":" . $currentTime % 60);
 
     ////////////////////////////////////////////////////////////////////////////////////////
     //    時刻表を検索
@@ -282,6 +311,63 @@ function normalTrainQuery($receivedMessage, $_time, $_station, $_route, &$contex
 
     fclose($r_hndl);
     return $message;
+}
+
+//
+//  駅名候補と駅名選択パネルを返答する
+//
+
+use \LINE\LINEBot\MessageBuilder\MultiMessageBuilder;
+use \LINE\LINEBot\MessageBuilder\TextMessageBuilder;
+use \LINE\LINEBot\ImagemapActionBuilder\AreaBuilder;
+use \LINE\LINEBot\MessageBuilder\Imagemap\BaseSizeBuilder;
+use \LINE\LINEBot\ImagemapActionBuilder\ImagemapMessageActionBuilder;
+use \LINE\LINEBot\MessageBuilder\ImagemapMessageBuilder;
+
+function createStationSelectorMessage(&$context_u) {
+
+    $textData = "";
+    $i = 1;
+
+    foreach ($context_u['tq']['recent'] as $stationName) {
+	$textData .= $i . ": " .  $stationName . PHP_EOL;
+	$i++;
+    }
+
+    $replyMessage = new MultiMessageBuilder();
+    $replyMessage->add(new TextMessageBuilder($textData));
+    $replyMessage->add(createSelectPanelBuilder_3($context_u)); 
+
+    return ($replyMessage);
+}
+
+//
+//  駅名選択パネルビルダーを作る
+//
+function createSelectPanelBuilder_3($context_u) {
+
+    $AreaBuilders = Array(  new AreaBuilder(  0,   0, 190, 195), 
+			    new AreaBuilder(190,   0, 190, 195),
+			    new AreaBuilder(380,   0, 190, 195),
+			    new AreaBuilder(570,   0, 190, 195),
+			    new AreaBuilder(  0, 200, 190, 195),
+			    new AreaBuilder(190, 200, 190, 195),
+			    new AreaBuilder(380, 200, 190, 195),
+			    new AreaBuilder(570, 200, 190, 195) );
+    $baseUrl = "https://jebaxxmessage.appspot.com/images/menu03";
+    $baseSize = new BaseSizeBuilder(400, 1040);
+    $callbacks = array();
+
+    for ($i = 0; $i < 8; $i++) {
+	if (!array_key_exists($i, $context_u['tq']['recent'])) break;
+
+	array_push($callbacks, new ImagemapMessageActionBuilder("時刻表 " . $context_u['tq']['recent'][$i], $AreaBuilders[$i]));
+    }
+
+    array_push($callbacks, new ImagemapMessageActionBuilder("次",     new AreaBuilder(770,   0, 190, 260)));
+    array_push($callbacks, new ImagemapMessageActionBuilder("つづき", new AreaBuilder(770, 200, 190, 260)));
+
+    return(new ImagemapMessageBuilder($baseUrl, "駅名選択パネル", $baseSize, $callbacks));
 }
 
 ?>
