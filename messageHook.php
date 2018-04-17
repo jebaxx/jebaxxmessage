@@ -7,11 +7,6 @@
 
 <?php
 
-/*
-DEFINE("ACCESS_TOKEN","u4hwbRiAxa6YB+Rc3xHI2M6I1uvHWcMwjl+9OhGyZfMxcMv0aG1e5v7ZBua3Y7Z5Y0ZPhJDw33oTMeQooXJoOs5EMsXsQ7961p73M84aThS8CDm5pm/k3nHw6yyXOYxHDb3Mnworv3QYCr3DenzSIwdB04t89/1O/w1cDnyilFU=");
-DEFINE("SECRET_TOKEN","f0f343f5498fdfd0edc1cb9846723fd0");
-*/
-
 require_once(__DIR__."/vendor/autoload.php");
 require_once(__DIR__."/reportSensData.php");
 require_once(__DIR__."/stationQuery.php");
