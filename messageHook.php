@@ -76,8 +76,37 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 	$context_u['user_id'] = $current_user;
 	$context_u['timestamp'] = $event->getTimestamp();
 
+	/*****************************/
+	if (!array_key_exists('photo', $context_u)) {
+	    //
+	    // アルバム登録の準備
+	    // connector側で、LINEのsource_idとAlbumIDの結び付けを行えるようにする準備として、source_idのリストを更新する
+	    //
+	    $response = $Bot->getProfile($current_user);
+	    syslog(LOG_INFO, "RAW profile: ".print_r($response, true));
+	    if ($response->isSucceeded()) {
+		$profile = $response->getJSONDecodedBody();
+		$displayName = $profile['displayName'];
+	    }
+	    else {
+		$displayName = "";
+	    }
+
+	    $gs_file = "gs://jebaxxconnector.appspot.com/sourcelist.json";
+	    $packedData = json_decode(file_get_contents($gs_file), true);
+	    syslog(LOG_INFO, "sourcelist.json :: " . print_r($packedData, true));
+	    $packedData[$current_user]['name'] = $displayName;
+	    $packedData[$current_user]['counter'] = 0; 
+	    file_put_contents($gs_file, json_encode($packedData));
+	    $context_u['photo'] = 0;
+	}
+	/*****************************/
+
 	if ($event instanceof PostbackEvent) {
 	    $replyMessage = PostbackeventDispatcher($event->getPostbackData(), $context_s, $context_u);	
+	}
+	else if ($event->getType() == 'join') {
+	    $replyMessage = "ともだち！ ともだち！";
 	}
 	else if ($event->getType() != 'message') {
 	    $replyMessage = "なに、それ？ ". $event->getType();
