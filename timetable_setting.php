@@ -305,8 +305,8 @@ if (is_array($packedStation)) {
 /////////////////////////////////////////////////////////////////////////////
 ////									/////
     if (count($packedStation)) {
-	echo "<td><input type='submit' name='action' value='編集' style='width:75px;' onclick=\"_post_action='edit'\" disabled>".PHP_EOL;
-	echo "<td><input type='submit' name='action' value='削除' style='width:75px;' onclick=\"_post_action='delete'\" disabled>".PHP_EOL;
+	echo "<input type='submit' name='action' value='編集' style='width:75px;' onclick=\"_post_action='edit'\" disabled>".PHP_EOL;
+	echo "<input type='submit' name='action' value='削除' style='width:75px;' onclick=\"_post_action='delete'\" disabled>".PHP_EOL;
     }
 ////									/////
 /////////////////////////////////////////////////////////////////////////////

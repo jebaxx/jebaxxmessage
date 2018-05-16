@@ -18,6 +18,7 @@ use google\appengine\api\cloud_storage\CloudStorageTools;
 use \LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use \LINE\LINEBot;
 use \LINE\LINEBot\Event\MessageEvent;
+use \LINE\LINEBot\Event\MessageEvent\ImageMessage;;
 use \LINE\LINEBot\Event\PostbackEvent;
 use \LINE\LINEBot\Response;
 use \LINE\LINEBot\MessageBuilder\TextMessageBuilder;
@@ -70,11 +71,26 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 
     foreach($Events as $event){
 
-	$current_user = $event->getEventSourceId();
-	$gs_context_u = "gs://" . CloudStorageTools::getDefaultGoogleStorageBucketName() . "/context_".$current_user.".pac";
+	if ($event->getType() == 'leave') continue;	// Ignore leave event
+
+	if ($event->isUserEvent()) {
+	    $source_type = 'user';
+	    $current_source = $event->getUserId();
+	}
+	else if ($event->isGroupEvent()) {
+	    $source_type = 'group';
+	    $current_source = $event->getGroupId();
+	}
+	else {
+	    $source_type = 'room';
+	    $current_source = $event->getRoomId();
+	}
+
+	$gs_context_u = "gs://" . CloudStorageTools::getDefaultGoogleStorageBucketName() . "/context_".$current_source.".pac";
 	$context_u = unserialize(file_get_contents($gs_context_u));
-	$context_u['user_id'] = $current_user;
+	$context_u['user_id'] = $current_source;
 	$context_u['timestamp'] = $event->getTimestamp();
+	$context_u['type'] = $source_type;
 
 	/*****************************/
 	if (!array_key_exists('photo', $context_u)) {
@@ -82,21 +98,29 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 	    // アルバム登録の準備
 	    // connector側で、LINEのsource_idとAlbumIDの結び付けを行えるようにする準備として、source_idのリストを更新する
 	    //
-	    $response = $Bot->getProfile($current_user);
-	    syslog(LOG_INFO, "RAW profile: ".print_r($response, true));
-	    if ($response->isSucceeded()) {
-		$profile = $response->getJSONDecodedBody();
-		$displayName = $profile['displayName'];
+	    if ($context_u['type'] == 'user') {
+		$response = $Bot->getProfile($current_source);
+		syslog(LOG_INFO, "RAW profile: ".print_r($response, true));
+		if ($response->isSucceeded()) {
+		    $profile = $response->getJSONDecodedBody();
+		    $displayName = $profile['displayName'];
+		}
+		else
+		    syslog(LOG_ERR, "cannot be acquired User Profile");
 	    }
-	    else {
-		$displayName = "";
+	    else if ($context_u['type'] == 'group') {
+		$e_time = new DateTime();
+		$e_time->setTimeStamp(intval($event->getTimestamp() / 1000));
+		$displayName = $e_time->format('Y/m/d H:i');
+		syslog(LOG_INFO, "member's name: ". $displayName);
 	    }
+	    else $displayName = "";
 
 	    $gs_file = "gs://jebaxxconnector.appspot.com/sourcelist.json";
 	    $packedData = json_decode(file_get_contents($gs_file), true);
 	    syslog(LOG_INFO, "sourcelist.json :: " . print_r($packedData, true));
-	    $packedData[$current_user]['name'] = $displayName;
-	    $packedData[$current_user]['counter'] = 0; 
+	    $packedData[$current_source]['name'] = $displayName;
+	    $packedData[$current_source]['counter'] = 0; 
 	    file_put_contents($gs_file, json_encode($packedData));
 	    $context_u['photo'] = 0;
 	}
@@ -109,7 +133,11 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 	    $replyMessage = "ともだち！ ともだち！";
 	}
 	else if ($event->getType() != 'message') {
-	    $replyMessage = "なに、それ？ ". $event->getType();
+	    // メッセージじゃない
+	    $replyMessage = null;
+	    if ($context_u['type'] == 'user') {
+		$replyMessage = "なに、これ？ ". $event->getType();
+	    }
 	}
 	else if ($event->getMessageType() == 'location') {
 	    $loc_latitude = $event->getLatitude();
@@ -122,26 +150,42 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 	    $receivedMessage = $event->getText();
 
 	    if (($replyMessage = messageDispatcher($receivedMessage, $context_s, $context_u)) == null) {
-		$replyMessage = "なに？";
+	        // 応答パターンのミスマッチ
+		if ($context_u['type'] == 'user') {
+		    $replyMessage = "なに？";
+		}
 	    }
 	}
+	else if ($event instanceof ImageMessage) {
+	    //-#-###- イメージデータ
+
+	    $messageId = $event->getMessageId();
+	    $imageResponse = $Bot->getMessageContent($messageId);
+
+	    $replyMessage = imageMessageProcessor($imageResponse, $context_s, $context_u);
+	}
 	else {
-	    $replyMessage = "なに、それ？ ". $event->getType()." : ".$event->getMessageType();
+	    // メッセージタイプが違う
+	    if ($context_u['type'] == 'user') {
+		$replyMessage = "なに、それ？ ". $event->getType()." : ".$event->getMessageType();
+	    }
 	}
 
 	file_put_contents($gs_context_u, serialize($context_u));
 
-	if (is_string($replyMessage)) {
-	    $ReplyBuilder = new TextMessageBuilder($replyMessage);
-	}
-	else {
-	    $ReplyBuilder = $replyMessage;
-	}
+	if ($replyMessage != null) {
+	    if (is_string($replyMessage)) {
+		$ReplyBuilder = new TextMessageBuilder($replyMessage);
+	    }
+	    else {
+		$ReplyBuilder = $replyMessage;
+	    }
 
-	$LineResponse = $Bot->replyMessage($event->getReplyToken(), $ReplyBuilder);
+	    $LineResponse = $Bot->replyMessage($event->getReplyToken(), $ReplyBuilder);
 
-	if(!$LineResponse->isSucceeded()) {
-	    syslog(LOG_ERR, sprintf("stat: %d  response: %s" , $LineResponse->getHTTPStatus(), $LineResponse->getRawBody()));
+	    if(!$LineResponse->isSucceeded()) {
+		syslog(LOG_ERR, sprintf("stat: %d  response: %s" , $LineResponse->getHTTPStatus(), $LineResponse->getRawBody()));
+	    }
 	}
     }
 
@@ -257,6 +301,44 @@ function PostbackeventDispatcher($postbackData, &$context_s, &$context_u) {
     }
 
     return $replyMessage;
+}
+
+function imageMessageProcessor($imageResponse, $context_s, $context_u) {
+
+    $gs_file = "gs://jebaxxconnector.appspot.com/sourcelist.json";
+    $packedData = json_decode(file_get_contents($gs_file), true);
+    syslog(LOG_INFO, "sourcelist.json :: " . print_r($packedData, true));
+
+    $user_id = $context_u['user_id'];
+
+    if (array_key_exists('album_id', $packedData[$user_id])) {
+
+	$counter = $packedData[$user_id]['counter']++; 
+	$imageFileName = $user_id . "_" . $counter . ".jpeg";
+	$imageFilePath = "gs://jebaxxconnector.appspot.com/photo_queue/" . $imageFileName;
+	syslog(LOG_INFO, "imageFilePath : " . $imageFilePath);
+	file_put_contents($imageFilePath, $imageResponse->getRawBody());
+
+	file_put_contents($gs_file, json_encode($packedData));
+
+	$url = 'https://jebaxxconnector.appspot.com/uploadRequestPoint';
+	$params = http_build_query([ 'filename' => $imageFileName, 'source' => $user_id, 'counter' => $counter ]);
+	$curl = curl_init($url);
+	curl_setopt($curl, CURLOPT_POST, TRUE);
+	curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
+	curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
+
+	if (($response = curl_exec($curl)) == FALSE) {
+	    syslog(LOG_ERR, "curl_exec error");
+	}
+
+	curl_close($curl);
+
+	return("#" . $counter . "を受付けた。");
+    }
+    else
+	return("アルバムを登録しておいてくれたら写真を届けてあげる。". PHP_EOL . "https://jebaxxconnector.appspot.com/config");
+
 }
 
 ?>

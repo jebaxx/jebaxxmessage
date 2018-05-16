@@ -42,7 +42,6 @@ class SignatureValidator
             throw new InvalidSignatureException('Signature must not be empty');
         }
 
-//        return hash_equals(base64_encode(hash_hmac('sha256', $body, $channelSecret, true)), $signature);
         return (base64_encode(hash_hmac('sha256', $body, $channelSecret, true)) == $signature);
     }
 }
