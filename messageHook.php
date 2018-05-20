@@ -41,7 +41,7 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 
     $signature = $_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE]; 
     $inputData = file_get_contents("php://input");
-    syslog(LOG_INFO, $inputData);
+    syslog(LOG_INFO, "inputData = " . $inputData);
 
     include(__DIR__."/accesstoken.php");
 
@@ -70,6 +70,10 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
     $context_s = unserialize(file_get_contents($gs_context_s));
 
     foreach($Events as $event){
+
+	if ($event->getType() == 'message')  {
+	    syslog(LOG_INFO, 'type = ' . $event->getMessageType() . ' dump : ' . print_r($event, true));
+	}
 
 	if ($event->getType() == 'leave') continue;	// Ignore leave event
 
@@ -156,13 +160,14 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 		}
 	    }
 	}
-	else if ($event instanceof ImageMessage) {
-	    //-#-###- イメージデータ
+#	else if ($event instanceof ImageMessage || $event instanceof VideoMessage) {
+	else if ($event->getMessageType() == 'image' || $event->getMessageType() == 'video') {
+	    //-#-###- 画像 or 動画
 
 	    $messageId = $event->getMessageId();
-	    $imageResponse = $Bot->getMessageContent($messageId);
+	    $contentResponse = $Bot->getMessageContent($messageId);
 
-	    $replyMessage = imageMessageProcessor($imageResponse, $context_s, $context_u);
+	    $replyMessage = contentMessageProcessor($contentResponse, $event->getMessageType(), $context_s, $context_u);
 	}
 	else {
 	    // メッセージタイプが違う
@@ -173,7 +178,7 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 
 	file_put_contents($gs_context_u, serialize($context_u));
 
-	if ($replyMessage != null) {
+	if ($replyMessage != null) {	 // 何も返信しないケースは以下をスキップ
 	    if (is_string($replyMessage)) {
 		$ReplyBuilder = new TextMessageBuilder($replyMessage);
 	    }
@@ -187,6 +192,7 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 		syslog(LOG_ERR, sprintf("stat: %d  response: %s" , $LineResponse->getHTTPStatus(), $LineResponse->getRawBody()));
 	    }
 	}
+
     }
 
     file_put_contents($gs_context_s, serialize($context_s));
@@ -303,7 +309,7 @@ function PostbackeventDispatcher($postbackData, &$context_s, &$context_u) {
     return $replyMessage;
 }
 
-function imageMessageProcessor($imageResponse, $context_s, $context_u) {
+function contentMessageProcessor($messageResponse, $type, $context_s, $context_u) {
 
     $gs_file = "gs://jebaxxconnector.appspot.com/sourcelist.json";
     $packedData = json_decode(file_get_contents($gs_file), true);
@@ -314,25 +320,35 @@ function imageMessageProcessor($imageResponse, $context_s, $context_u) {
     if (array_key_exists('album_id', $packedData[$user_id])) {
 
 	$counter = $packedData[$user_id]['counter']++; 
-	$imageFileName = $user_id . "_" . $counter . ".jpeg";
-	$imageFilePath = "gs://jebaxxconnector.appspot.com/photo_queue/" . $imageFileName;
-	syslog(LOG_INFO, "imageFilePath : " . $imageFilePath);
-	file_put_contents($imageFilePath, $imageResponse->getRawBody());
+	if ($type == 'image') {
+	    $contentFileName = $user_id . "_" . $counter . ".jpeg";
+	}
+	else {
+	    $contentFileName = $user_id . "_" . $counter . ".mp4";
+	}
+	$contentFilePath = "gs://jebaxxconnector.appspot.com/photo_queue/" . $contentFileName;
+	syslog(LOG_INFO, "contentFilePath : " . $contentFilePath);
+	file_put_contents($contentFilePath, $messageResponse->getRawBody());
 
 	file_put_contents($gs_file, json_encode($packedData));
 
 	$url = 'https://jebaxxconnector.appspot.com/uploadRequestPoint';
-	$params = http_build_query([ 'filename' => $imageFileName, 'source' => $user_id, 'counter' => $counter ]);
+	$params = http_build_query([ 'filename' => $contentFileName, 'source' => $user_id, 'counter' => $counter ]);
 	$curl = curl_init($url);
 	curl_setopt($curl, CURLOPT_POST, TRUE);
 	curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
 	curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
+	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
-	if (($response = curl_exec($curl)) == FALSE) {
-	    syslog(LOG_ERR, "curl_exec error");
-	}
-
+	$response = curl_exec($curl);
+	$errorno  = curl_errno($curl);
 	curl_close($curl);
+
+	syslog(LOG_INFO, "response = " . print_r($response, true));
+	if ($errorno !== CURLE_OK ) {
+	    syslog(LOG_ERR, "curl_exec error");
+	    return("#" . $counter . "がうまく登録できないみたい");
+	}
 
 	return("#" . $counter . "を受付けた。");
     }
