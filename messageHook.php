@@ -160,12 +160,16 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 		}
 	    }
 	}
-#	else if ($event instanceof ImageMessage || $event instanceof VideoMessage) {
 	else if ($event->getMessageType() == 'image' || $event->getMessageType() == 'video') {
 	    //-#-###- 画像 or 動画
 
 	    $messageId = $event->getMessageId();
-	    $contentResponse = $Bot->getMessageContent($messageId);
+	    try {
+		$contentResponse = $Bot->getMessageContent($messageId);
+	    } catch (Exception $e) {
+		syslog(LOG_ERR, "contents cannot recieved.");
+		$replyMessage = "時間内に引き取れなかった。もう一度送れる？";
+	    }
 
 	    $replyMessage = contentMessageProcessor($contentResponse, $event->getMessageType(), $context_s, $context_u);
 	}
@@ -347,7 +351,7 @@ function contentMessageProcessor($messageResponse, $type, $context_s, $context_u
 	syslog(LOG_INFO, "response = " . print_r($response, true));
 	if ($errorno !== CURLE_OK ) {
 	    syslog(LOG_ERR, "curl_exec error");
-	    return("#" . $counter . "がうまく登録できないみたい");
+	    return("#" . $counter . "がうまく登録できないみたい。「" .$response. "」だって");
 	}
 
 	return("#" . $counter . "を受付けた。");
@@ -355,6 +359,20 @@ function contentMessageProcessor($messageResponse, $type, $context_s, $context_u
     else
 	return("アルバムを登録しておいてくれたら写真を届けてあげる。". PHP_EOL . "https://jebaxxconnector.appspot.com/config");
 
+}
+
+function PushMessage($Line_id, $message) {
+
+    // create HTTPClient instance
+    $httpClient = new CurlHTTPClient(ACCESS_TOKEN);
+    $Bot = new LINEBot($httpClient, ['channelSecret' => SECRET_TOKEN]);
+
+    $pushMessageBuilder = new TextMessageBuilder($message);
+    $response = $Bot->pushMessage($lineId, $pushMessageBuilder);
+
+    if ($response->getHTTPStatus() != 200) {
+	syslog(LOG_ERR, "Failed to sending a push message and status code is ". $response->getHTTPStatus());
+    }
 }
 
 ?>
