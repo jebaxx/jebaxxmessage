@@ -92,9 +92,9 @@ ul.mokuji {
   <div id="head-side">
     <p>ぴょん太のプロフィール</p>
     <ul>
-      <li>Google Cloud Platformの仮想サーバー内に生息</li>
+      <li>Google App Engine 内に在住</li>
       <li>2017/11/14生まれ
-      <li>LINE友だちとLINEアプリで会話できる</li>
+      <li>LINE友だちとLINEアプリを介して会話ができる</li>
       <li>今後もっと重要な任務を担当することになっている</li>
     </ul>
   </div>
@@ -120,7 +120,7 @@ ul.mokuji {
     <small>
     <ul class="mokuji_0">
       <li class="side_menu"><a href="#intro">ぴょん太にできること</a></li>
-      <li class="side_menu"><a href="#sec_1">これから出発する電車を調べてくれる</a></li>
+      <li class="side_menu"><a href="#sec_1">近々出発する電車の発車時刻を調べてくれる</a></li>
         <ul class="mokuji">
           <li class="side_menu"><a href="#usage_a">使い方（LINEアプリ）</a></li>
             <ul class="mokuji">
@@ -140,14 +140,14 @@ ul.mokuji {
             </ul>
         </ul>
       <li class="side_menu"><a href="#sec_2">部屋の温度と気圧を教えてくれる</a></li>
-      <li class="side_menu"><a href="#sec_3">行きたいお店や施設を探して道案内してくれる</a></li>
+      <li class="side_menu"><a href="#sec_3">行きたいお店や施設までの道案内をしてくれる</a></li>
         <ul class="mokuji">
           <li class="side_menu"><a href="#Re_query">再検索</a></li>
           <li class="side_menu"><a href="#free_search">メニューにないお店や施設を探す</a></li>
           <li class="side_menu"><a href="#search_area">探索範囲の拡大・縮小</a></li>
           <li class="side_menu"><a href="#search_order">探索結果の表示順変更</a></li>
         </ul>
-      <li class="side_menu"><a href="#sec_4">受け取った写真をアルバムに登録してくれる</a></li>
+      <li class="side_menu"><a href="#sec_4">受け取った写真をPhotoアルバムに登録してくれる</a></li>
       <li class="side_menu"><a href="#important_point">利用上の注意事項</a></li>
     </ul>
     </small>
@@ -176,7 +176,7 @@ ul.mokuji {
   <div id="left-page">
     <hr>
     <h2 class="section_head" id="intro">ぴょん太にできること</h2>
-    <h3>１．これから駅を出発する電車を調べて答えてくれる</h3>
+    <h3>１．近々出発する電車の発車時刻を調べてくれる</h3>
     <ul>
       <li>利用する駅は<a href="#usage_w">事前登録</a>が必要</li>
       <li><a href="https://transit.yahoo.co.jp/station/time">こちら</a>で検索できる駅なら登録できる</li>
@@ -190,7 +190,7 @@ ul.mokuji {
       <li>気温・気圧の推移がわかるグラフも表示してくれる</li>
     </ul>
 
-    <h3>３．行きたいお店や施設を探して道案内してくれる</h3>
+    <h3>３．行きたいお店や施設までの道案内をしてくれる</h3>
     <ul>
       <li>地図上で示した起点から、近くにあるお寺や神社（その他の施設）を探してくれる（別名ご朱印ハンター）</li>
       <li>近隣のコンビニや駅など、機動力確保に欠かせない重要拠点も押さえてくれる</li>
@@ -198,7 +198,7 @@ ul.mokuji {
       <li>google Mapにもリンクしてるので、口コミもすぐにチェックできる</li>
     </ul>
 
-    <h3>４．受け取った写真をアルバムに登録してくれる</h3>
+    <h3>４．受け取った写真をPhotoアルバムに登録してくれる</h3>
     <ul>
       <li>先に登録先のアルバムを<a href="https://jebaxxconnector.appspot.com/config">ここ</a>で設定しておく</li>
       <li>あとはLINEに写真を投稿するだけ</li>
@@ -211,7 +211,7 @@ ul.mokuji {
     <h4><a href="#important_point">利用上の注意点を確認してください</a></h4>
 
     <hr>
-    <h2 class="section_head" id="sec_1">１．これから駅を出発する電車を調べて答えてくれる</h2>
+    <h2 class="section_head" id="sec_1">１．近々出発する電車の発車時刻を調べてくれる</h2>
     <h3>はじめに</h3>
      <p>ぴょん太に質問すると、質問した時刻と曜日（平日／土曜／休日）から、その時間以降に駅を出発する電車を調べて、この先４件分の出発時刻、行き先などを答えてくれます。<br>
      どの駅について質問したいのかは、事前にぴょん太にお願いしておく必要があります。駅を登録するための<a href="#usage_w">専用のWebページ</a>がありますので、そこから登録してください。</p>
@@ -273,7 +273,7 @@ ul.mokuji {
       気温・気圧の他に、今日の気温・気圧をグラフ表示してくれるページのURLも一緒に送ってきます。</p>
 
     <hr>
-    <h2 class="section_head" id="sec_3">３．行きたいお店や施設を探して道案内してくれる</h2>
+    <h2 class="section_head" id="sec_3">３．行きたいお店や施設までの道案内をしてくれる</h2>
     <h3>はじめに</h3>
       <p>LINEアプリから送るロケーション情報を使ってぴょん太とコミュニケーションします。<br>
       今いる地点をぴょん太に教えると近隣の神社・寺社・駅・コンビニなど（それ以外も）を探して場所を教えてくれます。
@@ -317,6 +317,16 @@ ul.mokuji {
       <h4 id="search_order">探索結果の表示順変更</h4>
         <p>探索結果は、普通は指定された地点から近い順に並びますが、指示すれば評判順に変える事もできます。</p>
         <p><img src="images/OrderSetting.jpeg" alt="表示順変更指示メッセージ" width=300/></p>
+
+    <hr>
+    <h2 class="section_head" id="sec_2">４．受け取った写真をphotoアルバムに登録してくれる</h2>
+    <h3>はじめに</h3>
+      <p>LINEで写真を受け取ったら、事前に設定したGoogle photoアルバムに写真を転送・登録します。
+      アルバム登録は<a href="https://jebaxxconnector.appspot.com/config">こちら</a>で、LINEアカウント（ユーザー又はグループ）毎に指定できます。</p>
+    <h3>使い方</h3>
+      <p>LINEで他の人と写真を共有する時のようにトーク画面に写真を投稿するだけです。</p>
+    <h3>事前設定の方法</h3>
+      <p>T.B.D.</p>
 
     <hr>
     <h4 class="section_head" id="important_point">利用上の注意事項</h4>
