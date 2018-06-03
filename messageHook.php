@@ -345,13 +345,16 @@ function contentMessageProcessor($messageResponse, $type, $context_s, $context_u
 	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
 	$response = curl_exec($curl);
-	$errorno  = curl_errno($curl);
+#	$errorno  = curl_errno($curl);
+#	$errorcode  = curl_error($curl);
 	curl_close($curl);
 
-	syslog(LOG_INFO, "response = " . print_r($response, true));
-	if ($errorno !== CURLE_OK ) {
+	$curl_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+	syslog(LOG_INFO, "response data = " . print_r($response, true));
+	syslog(LOG_INFO, "status code = " . $curl_status);
+	if (intval($curl_status / 100) * 100 != 200 ) {
 	    syslog(LOG_ERR, "curl_exec error");
-	    return("#" . $counter . "がうまく登録できないみたい。「" .$response. "」だって");
+	    return("#" . $counter . "がうまく登録できないみたい。「" .$response. "」と言われたよ");
 	}
 
 	return("#" . $counter . "を受付けた。");
