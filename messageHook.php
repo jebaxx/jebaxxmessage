@@ -364,19 +364,6 @@ function contentMessageProcessor($messageResponse, $type, $context_s, $context_u
 
 }
 
-function PushMessage($Line_id, $message) {
-
-    // create HTTPClient instance
-    $httpClient = new CurlHTTPClient(ACCESS_TOKEN);
-    $Bot = new LINEBot($httpClient, ['channelSecret' => SECRET_TOKEN]);
-
-    $pushMessageBuilder = new TextMessageBuilder($message);
-    $response = $Bot->pushMessage($lineId, $pushMessageBuilder);
-
-    if ($response->getHTTPStatus() != 200) {
-	syslog(LOG_ERR, "Failed to sending a push message and status code is ". $response->getHTTPStatus());
-    }
-}
 
 ?>
 
