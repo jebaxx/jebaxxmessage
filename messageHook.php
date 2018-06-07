@@ -80,20 +80,14 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 	if ($event->isUserEvent()) {
 	    $source_type = 'user';
 	    $current_source = $event->getUserId();
-	    if (array_key_exist('displayName', $context_u))
-		$userName = $context_u['displayName'];
-	    else
-		$userName = $current_source;
 	}
 	else if ($event->isGroupEvent()) {
 	    $source_type = 'group';
 	    $current_source = $event->getGroupId();
-	    $userName = getNameOfLineUser($event->getUserId());
 	}
 	else {
 	    $source_type = 'room';
 	    $current_source = $event->getRoomId();
-	    $userName = getNameOfLineUser($event->getUserId());
 	}
 
 	$gs_context_u = "gs://" . CloudStorageTools::getDefaultGoogleStorageBucketName() . "/context_".$current_source.".pac";
@@ -102,6 +96,15 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 	$context_u['timestamp'] = $event->getTimestamp();
 	$context_u['type'] = $source_type;
 
+	if ($source_type == 'user') {
+	    if (array_key_exists('displayName', $context_u))
+		$userName = $context_u['displayName'];
+	    else
+		$userName = $current_source;
+	}
+	else {
+	    $userName = getNameOfLineUser($event->getUserId());
+	}
 	/*****************************/
 	if (!array_key_exists('displayName', $context_u)) {
 	    //
@@ -344,7 +347,7 @@ function contentMessageProcessor($messageResponse, $userName, $type, $context_s,
 	file_put_contents($gs_file, json_encode($packedData));
 
 	$url = 'https://jebaxxconnector.appspot.com/uploadRequestPoint';
-	$params = http_build_query([ 'filename' => $contentFileName, 'source' => $user_id, 'counter' => $counter ]);
+	$params = http_build_query([ 'filename' => $contentFileName, 'source' => $user_id, 'userName' => $userName, 'counter' => $counter ]);
 	$curl = curl_init($url);
 	curl_setopt($curl, CURLOPT_POST, TRUE);
 	curl_setopt($curl, CURLOPT_POSTFIELDS, $params);

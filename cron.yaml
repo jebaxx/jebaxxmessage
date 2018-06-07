@@ -2,6 +2,6 @@ cron:
 
 - description:
   url: /cron_checkFailedPhoto.php
-  schedule: every 5 minutes
+  schedule: every 4 hours
   timezone: Asia/Tokyo
 
