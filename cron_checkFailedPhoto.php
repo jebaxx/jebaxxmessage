@@ -13,9 +13,10 @@ use \LINE\LINEBot\Constant\HTTPHeader;
 require_once("google/appengine/api/cloud_storage/CloudStorageTools.php");
 use google\appengine\api\cloud_storage\CloudStorageTools;
 
-$gs_file = "gs://jebaxxconnector.appspot.com/photo_queue/";
+syslog(LOG_INFO, "periodical check event triggered.");
 
-$result = glob($gs_file . "*.005");
+$gs_file_prefix = "gs://jebaxxconnector.appspot.com/photo_queue/";
+$result = glob($gs_file_prefix . "*.005");
 
 foreach $result as $filename {
 
@@ -24,9 +25,11 @@ foreach $result as $filename {
 	continue;
     }
 
-    PushMessage($matched[1], "送信に失敗したファイルが見つかったよ...". $filename);
+    syslog(LOG_INFO, "failed file found. [" . $matched[0] . "]");
+    syslog(LOG_INFO, "Source=[" . $matched[1] . "]");
+    PushMessage($matched[1], "送信に失敗したファイルを発見...". $filename);
+//    unlink($filename);
 }
-
 
 function PushMessage($Line_id, $message) {
 

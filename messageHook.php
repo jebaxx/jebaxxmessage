@@ -80,14 +80,20 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 	if ($event->isUserEvent()) {
 	    $source_type = 'user';
 	    $current_source = $event->getUserId();
+	    if (array_key_exist('displayName', $context_u))
+		$userName = $context_u['displayName'];
+	    else
+		$userName = $current_source;
 	}
 	else if ($event->isGroupEvent()) {
 	    $source_type = 'group';
 	    $current_source = $event->getGroupId();
+	    $userName = getNameOfLineUser($event->getUserId());
 	}
 	else {
 	    $source_type = 'room';
 	    $current_source = $event->getRoomId();
+	    $userName = getNameOfLineUser($event->getUserId());
 	}
 
 	$gs_context_u = "gs://" . CloudStorageTools::getDefaultGoogleStorageBucketName() . "/context_".$current_source.".pac";
@@ -97,7 +103,7 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 	$context_u['type'] = $source_type;
 
 	/*****************************/
-	if (!array_key_exists('photo', $context_u)) {
+	if (!array_key_exists('displayName', $context_u)) {
 	    //
 	    // アルバム登録の準備
 	    // connector側で、LINEのsource_idとAlbumIDの結び付けを行えるようにする準備として、source_idのリストを更新する
@@ -108,6 +114,7 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 		if ($response->isSucceeded()) {
 		    $profile = $response->getJSONDecodedBody();
 		    $displayName = $profile['displayName'];
+		    $context_u['displayName'] = $displayName;
 		}
 		else
 		    syslog(LOG_ERR, "cannot be acquired User Profile");
@@ -116,6 +123,7 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 		$e_time = new DateTime();
 		$e_time->setTimeStamp(intval($event->getTimestamp() / 1000));
 		$displayName = $e_time->format('Y/m/d H:i');
+		$context_u['displayName'] = $displayName;
 		syslog(LOG_INFO, "member's name: ". $displayName);
 	    }
 	    else $displayName = "";
@@ -126,7 +134,6 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 	    $packedData[$current_source]['name'] = $displayName;
 	    $packedData[$current_source]['counter'] = 0; 
 	    file_put_contents($gs_file, json_encode($packedData));
-	    $context_u['photo'] = 0;
 	}
 	/*****************************/
 
@@ -171,7 +178,7 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 		$replyMessage = "時間内に引き取れなかった。もう一度送れる？";
 	    }
 
-	    $replyMessage = contentMessageProcessor($contentResponse, $event->getMessageType(), $context_s, $context_u);
+	    $replyMessage = contentMessageProcessor($contentResponse, $userName, $event->getMessageType(), $context_s, $context_u);
 	}
 	else {
 	    // メッセージタイプが違う
@@ -313,7 +320,7 @@ function PostbackeventDispatcher($postbackData, &$context_s, &$context_u) {
     return $replyMessage;
 }
 
-function contentMessageProcessor($messageResponse, $type, $context_s, $context_u) {
+function contentMessageProcessor($messageResponse, $userName, $type, $context_s, $context_u) {
 
     $gs_file = "gs://jebaxxconnector.appspot.com/sourcelist.json";
     $packedData = json_decode(file_get_contents($gs_file), true);
@@ -364,6 +371,13 @@ function contentMessageProcessor($messageResponse, $type, $context_s, $context_u
 
 }
 
+function getNameOfLineUser($userId) {
+    $gs_context_u = "gs://" . CloudStorageTools::getDefaultGoogleStorageBucketName() . "/context_".$userId.".pac";
+    $__context_u = unserialize(file_get_contents($gs_context_u));
+    if ($__context_u == FALSE) return $userId;
+    return $__context_u['displayName'];
+
+}
 
 ?>
 

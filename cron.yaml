@@ -1,0 +1,7 @@
+cron:
+
+- description:
+  url: /cron_checkFailedPhoto.php
+  schedule: every 5 minutes
+  timezone: Asia/Tokyo
+
