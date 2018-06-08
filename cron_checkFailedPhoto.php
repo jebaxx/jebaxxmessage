@@ -22,10 +22,10 @@ foreach ($result as $filename) {
 	continue;
     }
 
-    syslog(LOG_INFO, "failed file found. [" . $matched[0] . "]");
-    syslog(LOG_INFO, "Source=[" . $matched[1] . "]");
-    PushMessage($matched[1], "送信に失敗したファイルを発見...". $filename);
-//    unlink($filename);
+    $message = file_get_contents($matched[0]);
+    syslog(LOG_INFO, "detected failed log:" . $matched[0] . "[" . $message . "]");
+    PushMessage($matched[1], $message);
+    unlink($filename);
 }
 
 function PushMessage($Line_id, $message) {
