@@ -22,7 +22,7 @@ foreach ($result as $filename) {
 	continue;
     }
 
-    $message = file_get_contents($matched[0]);
+    $message = file_get_contents($filename);
     syslog(LOG_INFO, "detected failed log:" . $matched[0] . "[" . $message . "]");
     PushMessage($matched[1], $message);
     unlink($filename);
