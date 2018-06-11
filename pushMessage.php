@@ -10,6 +10,8 @@ use \LINE\LINEBot\Constant\HTTPHeader;
 require_once("google/appengine/api/cloud_storage/CloudStorageTools.php");
 use google\appengine\api\cloud_storage\CloudStorageTools;
 
+require_once(__DIR__."/accesstoken.php");
+
 $gs_prefix = "gs://" . CloudStorageTools::getDefaultGoogleStorageBucketName() . "/";
 $gs_tomo_csv = $gs_prefix . "tomodachi_profile.csv";
 
@@ -36,7 +38,6 @@ else {
 	}
 
 	$pushMessageBuilder = new TextMessageBuilder($_POST['message']);
-	$response = $Bot->pushMessage($lineId, $pushMessageBuilder);
 
 	while (1) {
 	    if (($profile_line = fgetcsv($r_hndl)) == FALSE) break;
