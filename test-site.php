@@ -50,8 +50,10 @@ span.note {
 </style>
 
 <?php
+require_once("google/appengine/api/cloud_storage/CloudStorageTools.php");
+use google\appengine\api\cloud_storage\CloudStorageTools;
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST["msg_to_push"]) {
+if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST["msg_to_push"])) {
     require_once("pushMessage.php");
 	$_send_to = $_POST["send_to"];
 	$_msg_to_push = $_POST["msg_to_push"];
@@ -59,6 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST["msg_to_push"]) {
 	    BroadcastMessage($_msg_to_push);
 	else
 	    PushMessage($_send_to, $_msg_to_push);
+}
 
  ?>
 
@@ -89,7 +92,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST["msg_to_push"]) {
 <hr>
 <form name = "text_messagetest" action="messageHook.php" method="post">
 疑似メッセージを送信：
-<input size = 60 type='text' name='queryMessage'>
+<input size = 80 type='text' name='queryMessage'>
 <input type='submit' name='action' value='送信'>
 </form>
 
@@ -97,12 +100,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST["msg_to_push"]) {
 <!-- ///////////////////////////////////////////////// -->
 <h3>Push メッセージ送信</h3>
 <form name = "Push_message" action="test-site.php" method="post">
-宛先名：<input size=60 type='text' name='send_to'>
-宛先名：<select size=60 name='send_to'>
+宛先名：<select name='send_to'>
   <option value = "BROADCAST" 'selected'>BROADCAST</option>
 <?php
-    require_once("google/appengine/api/cloud_storage/CloudStorageTools.php");
-    use google\appengine\api\cloud_storage\CloudStorageTools;
     $gs_prefix = "gs://" . CloudStorageTools::getDefaultGoogleStorageBucketName() . "/";
     $gs_tomo_csv = $gs_prefix . "tomodachi_profile.csv";
 
@@ -113,12 +113,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST["msg_to_push"]) {
 
     while (1) {
 	if (($profile_line = fgetcsv($r_hndl)) == FALSE) break;
-	    echo "<option value = " . $profile_line[0] . " >" . $profile_line[0] . "</option>";
+	    echo "  <option value = '" . $profile_line[0] . "' >" . $profile_line[1] . "</option>". PHP_EOL;
     }
 
     fclose($r_hndl);
  ?>
-  </select>
+  </select><br>
 送信文：<input size=60 type='text' name='msg_to_push'>
 <input type='submit' name='action' value='送信'>
 </form>

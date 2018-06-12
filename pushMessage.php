@@ -7,6 +7,9 @@ use \LINE\LINEBot\Response;
 use \LINE\LINEBot\MessageBuilder\TextMessageBuilder;
 use \LINE\LINEBot\Constant\HTTPHeader;
 
+require_once("google/appengine/api/cloud_storage/CloudStorageTools.php");
+use google\appengine\api\cloud_storage\CloudStorageTools;
+
 function BroadcastMessage($message) {
 
     // create HTTPClient instance
@@ -14,8 +17,6 @@ function BroadcastMessage($message) {
     $Bot = new LINEBot($httpClient, ['channelSecret' => SECRET_TOKEN]);
     $pushMessageBuilder = new TextMessageBuilder($_POST['message']);
 
-    require_once("google/appengine/api/cloud_storage/CloudStorageTools.php");
-    use google\appengine\api\cloud_storage\CloudStorageTools;
     $gs_prefix = "gs://" . CloudStorageTools::getDefaultGoogleStorageBucketName() . "/";
     $gs_tomo_csv = $gs_prefix . "tomodachi_profile.csv";
 

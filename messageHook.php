@@ -131,12 +131,7 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 	}
 	/*****************************/
 
-	if ($source_type == 'user') {
-	    $senderName = $context_u['displayName'];
-	}
-	else {
-	    $senderName = getNameOfLineUser($event->getUserId());
-	}
+	$senderName = ($source_type == 'user') ? $context_u['displayName'] : getNameOfLineUser($event->getUserId());
 
 	if ($event instanceof PostbackEvent) {
 	    $replyMessage = PostbackeventDispatcher($event->getPostbackData(), $context_s, $context_u);	
@@ -377,7 +372,6 @@ function getNameOfLineUser($userId) {
     $__context_u = unserialize(file_get_contents($gs_context_u));
     if ($__context_u == FALSE) return $userId;
     return $__context_u['displayName'];
-
 }
 
 ?>
