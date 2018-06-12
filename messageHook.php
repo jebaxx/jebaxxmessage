@@ -96,15 +96,6 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 	$context_u['timestamp'] = $event->getTimestamp();
 	$context_u['type'] = $source_type;
 
-	if ($source_type == 'user') {
-	    if (array_key_exists('displayName', $context_u))
-		$userName = $context_u['displayName'];
-	    else
-		$userName = $current_source;
-	}
-	else {
-	    $userName = getNameOfLineUser($event->getUserId());
-	}
 	/*****************************/
 	if (!array_key_exists('displayName', $context_u)) {
 	    //
@@ -139,6 +130,13 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 	    file_put_contents($gs_file, json_encode($packedData));
 	}
 	/*****************************/
+
+	if ($source_type == 'user') {
+	    $senderName = $context_u['displayName'];
+	}
+	else {
+	    $senderName = getNameOfLineUser($event->getUserId());
+	}
 
 	if ($event instanceof PostbackEvent) {
 	    $replyMessage = PostbackeventDispatcher($event->getPostbackData(), $context_s, $context_u);	
@@ -181,7 +179,7 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 		$replyMessage = "時間内に引き取れなかった。もう一度送れる？";
 	    }
 
-	    $replyMessage = contentMessageProcessor($contentResponse, $userName, $event->getMessageType(), $context_s, $context_u);
+	    $replyMessage = contentMessageProcessor($contentResponse, $senderName, $event->getMessageType(), $context_s, $context_u);
 	}
 	else {
 	    // メッセージタイプが違う
@@ -323,7 +321,7 @@ function PostbackeventDispatcher($postbackData, &$context_s, &$context_u) {
     return $replyMessage;
 }
 
-function contentMessageProcessor($messageResponse, $userName, $type, $context_s, $context_u) {
+function contentMessageProcessor($messageResponse, $senderName, $type, $context_s, $context_u) {
 
     $gs_file = "gs://jebaxxconnector.appspot.com/sourcelist.json";
     $packedData = json_decode(file_get_contents($gs_file), true);
@@ -347,7 +345,7 @@ function contentMessageProcessor($messageResponse, $userName, $type, $context_s,
 	file_put_contents($gs_file, json_encode($packedData));
 
 	$url = 'https://jebaxxconnector.appspot.com/uploadRequestPoint';
-	$params = http_build_query([ 'filename' => $contentFileName, 'source' => $user_id, 'userName' => $userName, 'counter' => $counter ]);
+	$params = http_build_query([ 'filename' => $contentFileName, 'source' => $user_id, 'userName' => $senderName, 'counter' => $counter ]);
 	$curl = curl_init($url);
 	curl_setopt($curl, CURLOPT_POST, TRUE);
 	curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
