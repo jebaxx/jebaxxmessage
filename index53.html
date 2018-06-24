@@ -107,7 +107,7 @@ ul.mokuji {
     <p style="text-align:center"><a href="https://line.me/R/ti/p/%40ttu0660o">
         <img height="36" border="0" alt="友だち追加" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a></p>
     <hr>
-    <h4>メニュー</h4>
+    <h4>管理機能メニュー</h4>
     <ul>
       <li class="side_menu"><a href="timetable_setting.php">時刻表の登録・編集</a></li>
       <li class="side_menu"><a href="holiday_maintenance.php">時刻表・祝日の設定</a></li>
@@ -116,7 +116,7 @@ ul.mokuji {
     </ul>
 
     <hr>
-    <h4>目次…</h4>
+    <h4>マニュアル目次…</h4>
     <small>
     <ul class="mokuji_0">
       <li class="side_menu"><a href="#intro">ぴょん太にできること</a></li>
@@ -147,7 +147,16 @@ ul.mokuji {
           <li class="side_menu"><a href="#search_area">探索範囲の拡大・縮小</a></li>
           <li class="side_menu"><a href="#search_order">探索結果の表示順変更</a></li>
         </ul>
-      <li class="side_menu"><a href="#sec_4">受け取った写真をPhotoアルバムに登録してくれる</a></li>
+      <li class="side_menu"><a href="#sec_4">写真をPhotoアルバムに登録してくれる</a></li>
+        <ul class="mokuji">
+          <li class="side_menu"><a href="#config_album">登録先アルバムの設定方法</a>
+            <ul class="mokuji">
+              <li class="side_menu"><a href="#photo_route_list">写真転送先の一覧</a></li>
+              <li class="side_menu"><a href="#album_owner_list">Googleアカウントを登録する</a></li>
+              <li class="side_menu"><a href="#set_album_to_line">登録先のアルバムを決める</a></li>
+            </ul>
+          </li>
+        </ul>
       <li class="side_menu"><a href="#important_point">利用上の注意事項</a></li>
     </ul>
     </small>
@@ -198,15 +207,16 @@ ul.mokuji {
       <li>google Mapにもリンクしてるので、口コミもすぐにチェックできる</li>
     </ul>
 
-    <h3>４．受け取った写真をPhotoアルバムに登録してくれる</h3>
+    <h3>４．写真をPhotoアルバムに登録してくれる</h3>
     <ul>
+      <li>トーク画面で写真を共有するとぴょん太がそれをアルバムに登録しておいてくれる</li>
       <li>先に登録先のアルバムを<a href="https://jebaxxconnector.appspot.com/config">ここ</a>で設定しておく</li>
       <li>あとはLINEに写真を投稿するだけ</li>
     </ul>
 
     <hr>
     <h4>　◎ぴょん太をLINEの友達に登録して<br>
-    　　◎トーク画面でぴょん太に質問して<br>
+    　　◎トーク画面でぴょん太にお願いして<br>
     　　　◎「ぴょん太」の任務は、今後もどんどん増えてゆきます。</h4>
     <h4><a href="#important_point">利用上の注意点を確認してください</a></h4>
 
@@ -319,20 +329,37 @@ ul.mokuji {
         <p><img src="images/OrderSetting.jpeg" alt="表示順変更指示メッセージ" width=300/></p>
 
     <hr>
-    <h2 class="section_head" id="sec_2">４．受け取った写真をphotoアルバムに登録してくれる</h2>
+    <h2 class="section_head" id="sec_4">４．写真をphotoアルバムに登録してくれる</h2>
     <h3>はじめに</h3>
-      <p>LINEのトーク画面を介してぴょん太が写真を受け取ったら、設定してあるGoogle photoアルバムに写真を転送・登録します。
-      アルバム登録は<a href="https://jebaxxconnector.appspot.com/config">こちら</a>で。アルバムの設定はLINEアカウント（ユーザー又はグループ）毎にできます。</p>
+      <p>ぴょん太がLINEのトーク画面を通して写真データを受け取ると、あらかじめ指定されたGoogle photoアルバムに写真を転送・登録します。
+      アルバム登録は<a href="https://jebaxxconnector.appspot.com/config">こちら</a>から。登録先アルバムはLINEアカウント（ユーザー又はグループ）毎に設定できます。</p>
     <h3>使い方</h3>
       <p>LINEで他の人と写真を共有する時と同様に、トーク画面に写真を投稿するだけです。</p>
-    <h3>事前設定の方法</h3>
-      <p>設定ページの先頭には現在の登録状況が表示されます（写真転送先一覧）。</p>
-      <p><img src="images/route_list.png" alt="登録フローの画面" border=1 width=640></p>
-      <p>LINEでぴょん太のともだち登録すると、この一覧に自動的にエントリーされます。LINEグループ（※）に参加させた場合も同様にここに表示されるようになります。</p>
-      <p>※ LINEの決まりで、ぴょん太はLINEのグループ名を教えてもらえません。そのため、LINEグループに参加した直後は、参加したグループ名の替りに、登録年月日が設定されます。下で説明する設定画面で修正可能なので適宜修正してください。</p>
-      <p>ただし、ともだち登録した直後は写真の登録先が未設定になっているのでGoogleアカウントとアルバム名の欄が空欄になっています。この状態では、ぴょん太が写真を受け取っても何もしません。登録先アルバムを設定する必要があります。</p>
+    <h3 id="config_album">登録先アルバムの設定方法</h3>
+    <h4 id="photo_route_list">写真転送先の一覧</h4>
+      <p><a href="https://jebaxxconnector.appspot.com/config">設定ページ</a>の先頭にあるのは現在のぴょん太の友だち一覧です。
+      LINEでぴょん太を友だち登録したユーザ（グループも）が、この一覧にエントリーされています。
+      表には、それぞれのアカウントのアルバム登録状況も示されます（写真転送先一覧）</p>
+      <img src="images/route_list.png" alt="登録フローの画面" border=1 width=640></p>
+      <p>※ ぴょん太は友だちになったLINEユーザ名は教えてもらえるのですがLINEのグループ名を教えてもらえないので(これはLINE APIの仕様)、LINEグループ名は最初、登録年月日になっています。下で説明する設定画面で修正可能なので適宜修正してください。</p>
+      <p>ともだち登録しただけだとGoogleアカウントとアルバム名の欄が空欄になっています。この状態でぴょん太が写真を受け取ってもなにもできません。自動登録してもらうためにはここにアルバムを設定する必要があります。</p>
+      <p>アルバムを設定するため、一覧表下部にある「登録先を設定・変更」ボタンを使いますが、その前にアルバムを一覧表から選べるようにするため、アルバムの持ち主であるGoogleアカウントの登録から始めます。</p>
+    <h4 id="album_owner_list">Googleアカウントを登録する</h4>
+      <p>設定画面の一番下には、アルバムの持ち主であるGoogleアカウントの登録状況を示した一覧表があります。
+      写真登録先のアルバムの持ち主がまだここに登録されていない場合はアカウントを追加登録します。</p>
       <p><img src="images/owner_list.png" alt="Googleアカウント一覧画面" border=1 width=640></p>
+      <p>表の下部にある「新規登録」ボタンを押してアカウントを追加してください。</p>
+      <p>photoアルバムを一覧から探したり写真を登録するためにはgoogleにログインしておく必要があるため、「新規登録」の際に「Googleにログイン」画面に遷移します。</p>
+      <p>ログイン画面で認証できるとログインできたアカウント情報が追加されて、再びこの画面に戻ってきます。登録候補先となるアルバムリストも一覧表の中で確認できるようになります。</p>
+      <p>※ここでのログインは、アルバム一覧を入手するためだけでなくこの後の写真登録の準備にもなっています。ぴょん太は写真登録に必要な権限を持つAccessTokenをこの時入手して管理します。AccessTokenはアカウントを削除するまで保持し続けます。</p>
+      <p>※Photoアルバム側でアルバムが追加・削除されても、この一覧表は自動的に更新されません。アルバムの追加・修正・削除を反映するためには一覧表下部にある「アルバム再取得」ボタンを押してアルバム情報を更新てあげてください。</p>
+    <h4 id="set_album_to_line">登録先のアルバムを決める</h4>
+      <p>友だちとのLINEトーク画面と、そこに投稿された写真の登録先となるアルバムを結び付けるのが画面の真ん中の設定フォームです。「写真転送先の一覧」表下部の「登録先を設定・変更」ボタンを押すとこのフォームがアクティブに変わりますので、LINEアカウントとPhotoアルバムの対応設定をしてください。</p>
+      <p>その際に、LINEアカウント名を別の表示名に変更することが可能です。グループアカウントの場合にはグループ名を確認できないため、代わりに登録年月日が初期値に設定されていてちょっと分かりにくいですが、ここで本来の表示名に変更する事ができます。</p>
+      <p>「登録」ボタンを押すと、編集内容が「写真転送先の一覧」に反映されます。</p>
       <p><img src="images/route_info.png" alt="登録フロー設定画面" border=1 width=640></p>
+      <p>※登録したいアルバムが一覧の中にない場合には、ぴょん太が持っているアルバム一覧が最新でない可能性があります。前述の「アルバム再取得」を行ってみてください。</p>
+      <p>※Googleアカウントの選択肢に候補が出てこない場合には、先にGoogleアカウントのの登録から行ってください。</p>
 
     <hr>
     <h4 class="section_head" id="important_point">利用上の注意事項</h4>
