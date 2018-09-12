@@ -30,7 +30,7 @@ $reportSensData =  function($receivedMessage, $i, $matched, &$context_s, &$conte
 	$sens_rec .= PHP_EOL. "気圧：". $props['P-BMP180-01'];
     }
 
-    $sens_rec .= PHP_EOL . "https://jebaxxmonitor.appspot.com/temp_barometer.php";
+    $sens_rec .= PHP_EOL . "https://jebaxxmonitor.appspot.com/primary_sensors.php";
 
     return($sens_rec);
 };
